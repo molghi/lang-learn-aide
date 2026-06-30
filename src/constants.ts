@@ -33,3 +33,5 @@ export const APP_LANGUAGES: Record<string, string[]> = {
   latin: ["la", "#FFF7E6", "🇻🇦"],
   hebrew: ["he", "#FFF0E6", "🇮🇱"],
 };
+
+export const APP_LOCAL_STORAGE_ENTRIES_KEY: string = "app_entries";

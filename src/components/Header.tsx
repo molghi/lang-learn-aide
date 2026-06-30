@@ -10,7 +10,7 @@ export default function Header() {
   };
 
   return (
-    <header className="w-full font-mono text-green-400 mb-14">
+    <header className="w-full font-mono text-green-400 mb-20">
       <div className="max-w-4xl mx-auto flex items-center justify-between px-4 py-3 border-b border-emerald-600">
         <div className="text-lg tracking-wide">{APP_NAME}</div>
 

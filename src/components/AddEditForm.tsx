@@ -1,14 +1,38 @@
 import { STYLES_GENERAL_BTN, APP_LANGUAGES } from "../constants.ts";
-
-interface Field {
-  name: string;
-  label: string;
-  isRequired: boolean;
-  type: string;
-  placeholder: string;
-}
+import { useState } from "react";
+import { useMyContext } from "../context/AppContext.tsx";
 
 export default function AddEditForm() {
+  const { setEntries } = useMyContext();
+
+  const [formData, setFormData] = useState({
+    word: "",
+    language: "",
+    translation: "",
+    definition: "",
+    hint: "",
+    imageUrl: "",
+  });
+
+  interface Field {
+    name: string;
+    label: string;
+    isRequired: boolean;
+    type: string;
+    placeholder: string;
+  }
+
+  function valueGetter(fieldName: keyof typeof formData) {
+    return formData[fieldName];
+  }
+
+  function valueSetter(fieldName: keyof typeof formData, newValue: string) {
+    setFormData((prev) => ({
+      ...prev,
+      [fieldName]: newValue,
+    }));
+  }
+
   {
     /* Word, language, translation, definition, hint, web image URL */
   }
@@ -42,6 +66,13 @@ export default function AddEditForm() {
       placeholder: "Definition",
     },
     {
+      name: "tag",
+      label: "tag",
+      isRequired: false,
+      type: "text",
+      placeholder: "Tag", // tag, category, part of speech, topic
+    },
+    {
       name: "hint",
       label: "hint",
       isRequired: false,
@@ -59,19 +90,62 @@ export default function AddEditForm() {
 
   const fieldStyles: string = `bg-transparent border-b border-solid border-emerald-800 focus:outline-none p-1`;
 
+  /*
+
+  id: string; // unique
+  word: string;
+  language: string; // of word
+  translation: string; // into comfortable lang
+  definition?: string;
+  hint?: string; // used in practice later
+  tag?: string; // category, part of speech, topic -- sth to categorize it
+  imageUrl?: string; // web img path
+  createdAt: string;
+  modifiedAt: string;
+  lastPracticed?: string;
+  ease?: number; // for spaced rep sys
+  repetitionCount?: number; // how many times practiced this word
+
+  */
+
+  function submitForm(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const wordEntry = {
+      id: crypto.randomUUID(),
+      word: formData.word.trim(),
+      language: formData.language.trim(),
+      translation: formData.translation.trim(),
+      definition: formData.definition.trim(),
+      hint: formData.hint.trim(),
+      imageUrl: formData.imageUrl.trim(),
+      createdAt: new Date().toISOString(),
+      modifiedAt: new Date().toISOString(),
+    };
+    console.log("do some validation!");
+    setEntries((prev) => [...prev, wordEntry]);
+    setFormData({
+      word: "",
+      language: "",
+      translation: "",
+      definition: "",
+      hint: "",
+      imageUrl: "",
+    });
+  }
+
   return (
     <div className="w-full flex justify-center">
       <div className="w-full max-w-xl font-mono text-emerald-400">
         <h2 className="text-center text-3xl mb-14 tracking-wide">ADD ENTRY</h2>
 
-        <form className="grid grid-cols-2 gap-x-8 gap-y-8">
+        <form onSubmit={submitForm} className="grid grid-cols-2 gap-x-8 gap-y-8">
           {fields.map((f, i) => {
             if (f.type !== "select") {
               // return input text or url
               return (
                 <div className="flex gap-2" key={f.name}>
                   {f.isRequired && <span style={{ color: "red" }}>*</span>}
-                  <input name={f.name} type={f.type} placeholder={f.placeholder} required={f.isRequired} className={`${fieldStyles} w-full`} autoFocus={i === 0} />
+                  <input value={valueGetter(f.name as keyof typeof formData)} onChange={(e) => valueSetter(f.name as keyof typeof formData, e.target.value)} name={f.name} type={f.type} placeholder={f.placeholder} required={f.isRequired} className={`${fieldStyles} w-full`} autoFocus={i === 0} autoComplete="off" />
                 </div>
               );
             } else {
@@ -79,7 +153,7 @@ export default function AddEditForm() {
               return (
                 <div className="flex gap-2" key={f.name}>
                   {f.isRequired && <span style={{ color: "red" }}>*</span>}
-                  <select name={f.name} required={f.isRequired} className="bg-transparent border-b border-solid border-emerald-800 focus:outline-none w-full p-1 cursor-pointer" defaultValue="">
+                  <select value={valueGetter(f.name as keyof typeof formData)} onChange={(e) => valueSetter(f.name as keyof typeof formData, e.target.value)} name={f.name} required={f.isRequired} className="bg-transparent border-b border-solid border-emerald-800 focus:outline-none w-full p-1 cursor-pointer" defaultValue="">
                     <option value="" disabled>
                       {f.placeholder}
                     </option>
@@ -95,7 +169,9 @@ export default function AddEditForm() {
           })}
 
           <div className="col-span-2 flex justify-end pt-4">
-            <button className={STYLES_GENERAL_BTN}>Submit</button>
+            <button type="submit" className={STYLES_GENERAL_BTN}>
+              Submit
+            </button>
           </div>
         </form>
       </div>

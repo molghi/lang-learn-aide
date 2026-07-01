@@ -1,9 +1,9 @@
-import { STYLES_GENERAL_BTN, APP_LANGUAGES } from "../constants.ts";
+import { STYLES_GENERAL_BTN, APP_LANGUAGES, STYLES_BLOCK_HEADER } from "../constants.ts";
 import { useState } from "react";
 import { useMyContext } from "../context/AppContext.tsx";
 
 export default function AddEditForm() {
-  const { setEntries } = useMyContext();
+  const { setEntries, setNotificationContent, setIsNotificationShown } = useMyContext();
 
   const [formData, setFormData] = useState({
     word: "",
@@ -90,24 +90,6 @@ export default function AddEditForm() {
 
   const fieldStyles: string = `bg-transparent border-b border-solid border-emerald-800 focus:outline-none p-1`;
 
-  /*
-
-  id: string; // unique
-  word: string;
-  language: string; // of word
-  translation: string; // into comfortable lang
-  definition?: string;
-  hint?: string; // used in practice later
-  tag?: string; // category, part of speech, topic -- sth to categorize it
-  imageUrl?: string; // web img path
-  createdAt: string;
-  modifiedAt: string;
-  lastPracticed?: string;
-  ease?: number; // for spaced rep sys
-  repetitionCount?: number; // how many times practiced this word
-
-  */
-
   function submitForm(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const wordEntry = {
@@ -123,6 +105,8 @@ export default function AddEditForm() {
     };
     console.log("do some validation!");
     setEntries((prev) => [...prev, wordEntry]);
+    setIsNotificationShown(true);
+    setNotificationContent(["success", "Submitted successfully!"]);
     setFormData({
       word: "",
       language: "",
@@ -136,7 +120,7 @@ export default function AddEditForm() {
   return (
     <div className="w-full flex justify-center">
       <div className="w-full max-w-xl font-mono text-emerald-400">
-        <h2 className="text-center text-3xl mb-14 tracking-wide">ADD ENTRY</h2>
+        <h2 className={STYLES_BLOCK_HEADER}>ADD ENTRY</h2>
 
         <form onSubmit={submitForm} className="grid grid-cols-2 gap-x-8 gap-y-8">
           {fields.map((f, i) => {

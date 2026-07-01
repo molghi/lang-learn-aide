@@ -17,9 +17,15 @@ export interface Entry {
   repetitionCount?: number; // how many times practiced this word
 }
 
+type NotificationType = "success" | "error" | "warning";
+
 interface AppContextType {
   entries: Entry[];
   setEntries: React.Dispatch<React.SetStateAction<Entry[]>>;
+  notificationContent: [NotificationType, string] | null;
+  setNotificationContent: React.Dispatch<React.SetStateAction<[NotificationType, string] | null>>;
+  isNotificationShown: boolean;
+  setIsNotificationShown: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -29,6 +35,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const stored = localStorage.getItem(APP_LOCAL_STORAGE_ENTRIES_KEY);
     return stored ? JSON.parse(stored) : [];
   });
+  const [notificationContent, setNotificationContent] = useState<[NotificationType, string] | null>(null);
+  const [isNotificationShown, setIsNotificationShown] = useState<boolean>(false);
 
   useEffect(() => {
     const stored = localStorage.getItem(APP_LOCAL_STORAGE_ENTRIES_KEY);
@@ -43,7 +51,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     console.log("Saved to LS!");
   }, [entries]);
 
-  return <AppContext.Provider value={{ entries, setEntries }}>{children}</AppContext.Provider>;
+  useEffect(() => {
+    if (!isNotificationShown) return;
+    const timer = setTimeout(() => {
+      setIsNotificationShown(false);
+      setNotificationContent(null);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [isNotificationShown]);
+
+  return <AppContext.Provider value={{ entries, setEntries, notificationContent, setNotificationContent, isNotificationShown, setIsNotificationShown }}>{children}</AppContext.Provider>;
 }
 
 // ============================================================================

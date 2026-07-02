@@ -19,6 +19,8 @@ export interface Entry {
 
 type NotificationType = "success" | "error" | "warning";
 
+type AppView = "add" | "view" | "practice";
+
 interface AppContextType {
   entries: Entry[];
   setEntries: React.Dispatch<React.SetStateAction<Entry[]>>;
@@ -26,6 +28,8 @@ interface AppContextType {
   setNotificationContent: React.Dispatch<React.SetStateAction<[NotificationType, string] | null>>;
   isNotificationShown: boolean;
   setIsNotificationShown: React.Dispatch<React.SetStateAction<boolean>>;
+  activeView: AppView;
+  setActiveView: React.Dispatch<React.SetStateAction<AppView>>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -37,6 +41,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   });
   const [notificationContent, setNotificationContent] = useState<[NotificationType, string] | null>(null);
   const [isNotificationShown, setIsNotificationShown] = useState<boolean>(false);
+  const [activeView, setActiveView] = useState<AppView>("view");
 
   useEffect(() => {
     const stored = localStorage.getItem(APP_LOCAL_STORAGE_ENTRIES_KEY);
@@ -60,7 +65,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return () => clearTimeout(timer);
   }, [isNotificationShown]);
 
-  return <AppContext.Provider value={{ entries, setEntries, notificationContent, setNotificationContent, isNotificationShown, setIsNotificationShown }}>{children}</AppContext.Provider>;
+  return <AppContext.Provider value={{ entries, setEntries, notificationContent, setNotificationContent, isNotificationShown, setIsNotificationShown, activeView, setActiveView }}>{children}</AppContext.Provider>;
 }
 
 // ============================================================================

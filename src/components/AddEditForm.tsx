@@ -153,7 +153,7 @@ export default function AddEditForm() {
           })}
 
           <div className="col-span-2 flex justify-end pt-4">
-            <button type="submit" className={STYLES_GENERAL_BTN}>
+            <button type="submit" className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600`}>
               Submit
             </button>
           </div>

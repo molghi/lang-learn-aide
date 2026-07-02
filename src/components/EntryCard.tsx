@@ -1,5 +1,8 @@
 import { APP_LANGUAGES } from "../constants.ts";
 import type { Entry } from "../context/AppContext.tsx";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+import { useState } from "react";
 
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleString("en-US", {
@@ -17,6 +20,9 @@ function getLanguageMeta(code: string) {
 }
 
 export default function EntryCard({ entry }: { entry: Entry }) {
+  const [open, setOpen] = useState<boolean>(false);
+  const [image, setImage] = useState<string>("");
+
   const langMeta = getLanguageMeta(entry.language);
   let langCode, langColor, langFlag, langFullName;
   if (langMeta) {
@@ -28,8 +34,28 @@ export default function EntryCard({ entry }: { entry: Entry }) {
 
   const borderColor = `border-[${langColor}]`;
 
+  const lightboxStyles = `
+  .yarl__container {
+      background: rgba(10, 10, 15, 0.75) !important;
+      backdrop-filter: blur(6px) !important;
+    }
+`;
+
   return (
     <div className={`relative border ${borderColor} bg-black/40 p-3 font-mono text-emerald-100`}>
+      <style>{lightboxStyles}</style>
+
+      {/* Btns */}
+      <div className="absolute top-2 right-2 flex gap-2">
+        <button onClick={() => console.log("edit word: throw to form tab")} className="px-2 py-1 text-xs border border-emerald-500/30 bg-black/40 text-emerald-200 opacity-60 hover:opacity-100 hover:border-emerald-300 hover:text-emerald-100 transition-all duration-200 backdrop-blur-sm rounded-sm">
+          edit
+        </button>
+        <button onClick={() => console.log("prompt to delete word")} className="px-2 py-1 text-xs border border-red-500/30 bg-black/40 text-red-300 opacity-60 hover:opacity-100 hover:border-red-400 hover:text-red-200 transition-all duration-200 backdrop-blur-sm rounded-sm">
+          delete
+        </button>
+      </div>
+
+      {/* Word card data */}
       {entry.language && entry.word && (
         <div className="top-2 left-2 text-lg flex gap-4">
           <span title={langFullName}>{langFlag}</span>
@@ -41,9 +67,20 @@ export default function EntryCard({ entry }: { entry: Entry }) {
 
       <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-emerald-200/80">
         {entry.translation && (
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-start">
             <span className="opacity-50">translation:</span>
-            <span>{entry.translation}</span>
+
+            <span className="relative group">
+              {/* hidden word (still word-sized hover trigger) */}
+              <span className="inline-flex relative">
+                <span className="text-emerald-100 opacity-0 group-hover:opacity-100 transition-opacity duration-1000">{entry.translation}</span>
+              </span>
+
+              {/* full-width metal cover */}
+              <span className="absolute inset-0 px-2 py-0.5 rounded-sm border border-gray-300/30 bg-gradient-to-b from-gray-500/50 to-gray-700/90 backdrop-blur-[1px] pointer-events-none group-hover:opacity-0 transition-opacity duration-700 overflow-hidden">
+                <span className="absolute inset-0 opacity-10 bg-[repeating-linear-gradient(45deg,transparent,transparent_6px,rgba(255,255,255,0.98)_6px,rgba(255,255,255,0.98)_12px)]" />
+              </span>
+            </span>
           </div>
         )}
         {entry.definition && (
@@ -70,12 +107,21 @@ export default function EntryCard({ entry }: { entry: Entry }) {
         {entry.imageUrl && (
           <div className="flex gap-2">
             <span className="opacity-50">img:</span>
-            <span>{entry.imageUrl}</span>
+            <img
+              src={entry.imageUrl}
+              alt="word img"
+              className="w-[80%] h-32 object-cover cursor-pointer hover:opacity-75 transition-opacity duration-500 ease-out"
+              onClick={() => {
+                if (!entry.imageUrl) return;
+                setImage(entry.imageUrl);
+                setOpen(true);
+              }}
+            />
           </div>
         )}
 
         {entry.createdAt && (
-          <div className="flex gap-2">
+          <div className="flex gap-2 text-[12px]">
             <span className="opacity-50">created:</span>
             <span>{formatDate(entry.createdAt)}</span>
           </div>
@@ -89,7 +135,7 @@ export default function EntryCard({ entry }: { entry: Entry }) {
         )} */}
 
         {entry.lastPracticed && (
-          <div className="flex gap-2">
+          <div className="flex gap-2 text-[12px]">
             <span className="opacity-50">practiced:</span>
             <span>{formatDate(entry.lastPracticed)}</span>
           </div>
@@ -109,6 +155,18 @@ export default function EntryCard({ entry }: { entry: Entry }) {
           </div>
         )}
       </div>
+      <Lightbox
+        open={open}
+        close={() => setOpen(false)}
+        slides={[{ src: image }]}
+        controller={{
+          closeOnBackdropClick: true,
+        }}
+        render={{
+          buttonPrev: () => null,
+          buttonNext: () => null,
+        }}
+      />
     </div>
   );
 }

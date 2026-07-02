@@ -7,19 +7,22 @@ import Notification from "./components/Notification.tsx";
 import EntriesView from "./components/EntriesView.tsx";
 
 function App() {
-  const { isNotificationShown } = useMyContext();
+  const { isNotificationShown, activeView } = useMyContext();
 
   useEffect(() => {
     document.title = `${APP_NAME} | ${APP_SHORT_SLOGAN}`;
   }, []);
 
   return (
-    <>
+    <div className="pb-[150px]">
       <Header />
-      <EntriesView />
-      {/* <AddEditForm /> */}
+
+      {activeView === "add" && <AddEditForm />}
+      {activeView === "view" && <EntriesView />}
+      {activeView === "practice" && <div className="text-center font-mono text-gray">Practice will be here...</div>}
+
       {isNotificationShown && <Notification />}
-    </>
+    </div>
   );
 }
 

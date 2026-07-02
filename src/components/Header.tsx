@@ -1,13 +1,17 @@
 import { APP_NAME, STYLES_GENERAL_BTN } from "../constants.ts";
+import { useMyContext } from "../context/AppContext.tsx";
 
 export default function Header() {
+  const { activeView, setActiveView } = useMyContext();
   const headerBtnStyles: string = STYLES_GENERAL_BTN;
 
   const headerBtnNamesTitles: Record<string, string[]> = {
-    addNew: ["Add", "Add new word or words"],
+    addNew: ["Add", "Add a new word or words"],
     viewAll: ["View", "View your added words"],
     practice: ["Practice", "Practice by recalling your words"],
   };
+
+  const activeBtn: string = "border-solid";
 
   return (
     <header className="w-full font-mono text-green-400 mb-20">
@@ -15,13 +19,13 @@ export default function Header() {
         <div className="text-lg tracking-wide">{APP_NAME}</div>
 
         <div className="flex gap-8 text-md text-emerald-400">
-          <button className={headerBtnStyles} title={headerBtnNamesTitles.addNew[1]}>
+          <button onClick={() => setActiveView("add")} className={`${headerBtnStyles} ${activeView === "add" ? "border-solid border-emerald-300" : "border-dashed border-emerald-600"}`} title={headerBtnNamesTitles.addNew[1]}>
             {headerBtnNamesTitles.addNew[0]}
           </button>
-          <button className={headerBtnStyles} title={headerBtnNamesTitles.viewAll[1]}>
+          <button onClick={() => setActiveView("view")} className={`${headerBtnStyles} ${activeView === "view" ? "border-solid border-emerald-400" : "border-dashed border-emerald-600"}`} title={headerBtnNamesTitles.viewAll[1]}>
             {headerBtnNamesTitles.viewAll[0]}
           </button>
-          <button className={headerBtnStyles} title={headerBtnNamesTitles.practice[1]}>
+          <button onClick={() => setActiveView("practice")} className={`${headerBtnStyles} ${activeView === "practice" ? "border-solid border-emerald-400" : "border-dashed border-emerald-600"}`} title={headerBtnNamesTitles.practice[1]}>
             {headerBtnNamesTitles.practice[0]}
           </button>
         </div>

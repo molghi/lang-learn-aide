@@ -4,7 +4,7 @@ export const APP_NAME: string = "Langer";
 
 export const APP_SHORT_SLOGAN: string = "Your language learning aide";
 
-export const STYLES_GENERAL_BTN: string = "hover:text-emerald-200 border-b border-dashed border-emerald-600 hover:border-emerald-200 transition-all duration-200 ease-out";
+export const STYLES_GENERAL_BTN: string = "hover:text-emerald-200 border-b  hover:border-emerald-200 transition-all duration-200 ease-out"; // border-dashed border-emerald-600
 
 export const APP_LANGUAGES: Record<string, string[]> = {
   english: ["en", "#A7C7E7", "🇺🇸", "English"],

@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect } from "react";
-import { APP_LOCAL_STORAGE_ENTRIES_KEY } from "../constants.ts";
+import { APP_LOCAL_STORAGE_ENTRIES_KEY, APP_LOCAL_STORAGE_BG_KEY } from "../constants.ts";
 
 export interface Entry {
   id: string; // unique
@@ -30,9 +30,15 @@ interface AppContextType {
   setIsNotificationShown: React.Dispatch<React.SetStateAction<boolean>>;
   activeView: AppView;
   setActiveView: React.Dispatch<React.SetStateAction<AppView>>;
+  animBgUrl: string | null;
+  setAnimBgUrl: React.Dispatch<React.SetStateAction<string | null>>;
+  editingEntryId: string | null;
+  setEditingEntryId: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
+
+// ============================================================================
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [entries, setEntries] = useState<Entry[]>(() => {
@@ -42,6 +48,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [notificationContent, setNotificationContent] = useState<[NotificationType, string] | null>(null);
   const [isNotificationShown, setIsNotificationShown] = useState<boolean>(false);
   const [activeView, setActiveView] = useState<AppView>("view");
+  const [animBgUrl, setAnimBgUrl] = useState<string | null>(() => {
+    const stored = localStorage.getItem(APP_LOCAL_STORAGE_BG_KEY);
+    return stored ? stored : null;
+  });
+  const [editingEntryId, setEditingEntryId] = useState<string | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem(APP_LOCAL_STORAGE_ENTRIES_KEY);
@@ -65,7 +76,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return () => clearTimeout(timer);
   }, [isNotificationShown]);
 
-  return <AppContext.Provider value={{ entries, setEntries, notificationContent, setNotificationContent, isNotificationShown, setIsNotificationShown, activeView, setActiveView }}>{children}</AppContext.Provider>;
+  return <AppContext.Provider value={{ entries, setEntries, notificationContent, setNotificationContent, isNotificationShown, setIsNotificationShown, activeView, setActiveView, animBgUrl, setAnimBgUrl, editingEntryId, setEditingEntryId }}>{children}</AppContext.Provider>;
 }
 
 // ============================================================================

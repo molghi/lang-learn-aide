@@ -1,9 +1,23 @@
 import { STYLES_GENERAL_BTN, APP_LANGUAGES, STYLES_BLOCK_HEADER } from "../constants.ts";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMyContext } from "../context/AppContext.tsx";
 
 export default function AddEditForm() {
-  const { setEntries, setNotificationContent, setIsNotificationShown } = useMyContext();
+  const { entries, setEntries, setNotificationContent, setIsNotificationShown, editingEntryId } = useMyContext();
+
+  useEffect(() => {
+    if (!editingEntryId) return;
+    const entry = entries.find((e) => e.id === editingEntryId);
+    if (!entry) return;
+    setFormData({
+      word: entry.word,
+      language: entry.language,
+      translation: entry.translation,
+      definition: entry.definition || "",
+      hint: entry.hint || "",
+      imageUrl: entry.imageUrl || "",
+    });
+  }, [editingEntryId, entries]);
 
   const [formData, setFormData] = useState({
     word: "",
@@ -117,10 +131,12 @@ export default function AddEditForm() {
     });
   }
 
+  // ============================================================================
+
   return (
     <div className="w-full flex justify-center">
       <div className="w-full max-w-xl font-mono text-emerald-400">
-        <h2 className={STYLES_BLOCK_HEADER}>ADD ENTRY</h2>
+        <h2 className={STYLES_BLOCK_HEADER}>{editingEntryId ? "EDIT" : "ADD"} ENTRY</h2>
 
         <form onSubmit={submitForm} className="grid grid-cols-2 gap-x-8 gap-y-8">
           {fields.map((f, i) => {
@@ -154,7 +170,7 @@ export default function AddEditForm() {
 
           <div className="col-span-2 flex justify-end pt-4">
             <button type="submit" className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600`}>
-              Submit
+              {editingEntryId ? "Change" : "Submit"}
             </button>
           </div>
         </form>

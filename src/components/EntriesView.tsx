@@ -27,7 +27,7 @@ export default function EntriesView() {
         )}
 
         {/* cards container */}
-        <div className="grid gap-8 mb-16">{entries.length > 0 ? entries.map((entry) => <EntryCard key={entry.id} entry={entry} />) : <div className="text-center font-mono text-gray italic">You have no entries so far.</div>}</div>
+        <div className="grid gap-8 mb-16">{entries.length > 0 ? [...entries].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((entry) => <EntryCard key={entry.id} entry={entry} />) : <div className="text-center font-mono text-gray italic">You have no entries so far.</div>}</div>
 
         {/* pagination */}
         {entries.length > 0 && (

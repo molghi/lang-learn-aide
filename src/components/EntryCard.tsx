@@ -3,6 +3,9 @@ import type { Entry } from "../context/AppContext.tsx";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import { useState } from "react";
+import { useMyContext } from "../context/AppContext.tsx";
+
+// ============================================================================
 
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleString("en-US", {
@@ -14,14 +17,19 @@ function formatDate(dateString: string) {
   });
 }
 
+// ============================================================================
+
 function getLanguageMeta(code: string) {
   const entry = Object.entries(APP_LANGUAGES).find(([, value]) => value[0] === code);
   return entry ? entry[1] : null;
 }
 
+// ============================================================================
+
 export default function EntryCard({ entry }: { entry: Entry }) {
   const [open, setOpen] = useState<boolean>(false);
   const [image, setImage] = useState<string>("");
+  const { setEditingEntryId, setActiveView } = useMyContext();
 
   const langMeta = getLanguageMeta(entry.language);
   let langCode, langColor, langFlag, langFullName;
@@ -30,7 +38,6 @@ export default function EntryCard({ entry }: { entry: Entry }) {
   } else {
     [langCode, langColor, langFlag, langFullName] = ["", "", "", ""];
   }
-  // border-emerald-500/20
 
   const borderColor = `border-[${langColor}]`;
 
@@ -47,7 +54,13 @@ export default function EntryCard({ entry }: { entry: Entry }) {
 
       {/* Btns */}
       <div className="absolute top-2 right-2 flex gap-2">
-        <button onClick={() => console.log("edit word: throw to form tab")} className="px-2 py-1 text-xs border border-emerald-500/30 bg-black/40 text-emerald-200 opacity-60 hover:opacity-100 hover:border-emerald-300 hover:text-emerald-100 transition-all duration-200 backdrop-blur-sm rounded-sm">
+        <button
+          onClick={() => {
+            setEditingEntryId(entry.id);
+            setActiveView("add");
+          }}
+          className="px-2 py-1 text-xs border border-emerald-500/30 bg-black/40 text-emerald-200 opacity-60 hover:opacity-100 hover:border-emerald-300 hover:text-emerald-100 transition-all duration-200 backdrop-blur-sm rounded-sm"
+        >
           edit
         </button>
         <button onClick={() => console.log("prompt to delete word")} className="px-2 py-1 text-xs border border-red-500/30 bg-black/40 text-red-300 opacity-60 hover:opacity-100 hover:border-red-400 hover:text-red-200 transition-all duration-200 backdrop-blur-sm rounded-sm">
@@ -110,7 +123,7 @@ export default function EntryCard({ entry }: { entry: Entry }) {
             <img
               src={entry.imageUrl}
               alt="word img"
-              className="w-[80%] h-32 object-cover cursor-pointer hover:opacity-75 transition-opacity duration-500 ease-out"
+              className="w-[80%] h-32 object-cover cursor-pointer transition duration-500 ease-out opacity-60 hover:opacity-100 grayscale hover:grayscale-0"
               onClick={() => {
                 if (!entry.imageUrl) return;
                 setImage(entry.imageUrl);

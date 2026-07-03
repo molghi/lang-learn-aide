@@ -38,3 +38,5 @@ export const APP_LANGUAGES: Record<string, string[]> = {
 export const APP_LOCAL_STORAGE_ENTRIES_KEY: string = "app_entries";
 
 export const STYLES_BLOCK_HEADER: string = "text-center text-3xl mb-14 tracking-wide";
+
+export const APP_LOCAL_STORAGE_BG_KEY: string = "app_bg";

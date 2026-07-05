@@ -207,6 +207,19 @@ export default function AddEditForm() {
           })}
 
           <div className="col-span-2 flex justify-end pt-4">
+            {editingEntryId && (
+              <button
+                className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600 mr-auto text-red-700 border-red-700 hover:text-[red] hover:border-[red]`}
+                title="Cancel editing entry"
+                onClick={() => {
+                  setEditingEntryId(null);
+                  setActiveView("view");
+                }}
+              >
+                Cancel
+              </button>
+            )}
+
             <button type="submit" className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600`}>
               {editingEntryId ? "Change" : "Submit"}
             </button>

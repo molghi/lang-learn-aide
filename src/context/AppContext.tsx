@@ -34,6 +34,8 @@ interface AppContextType {
   setAnimBgUrl: React.Dispatch<React.SetStateAction<string | null>>;
   editingEntryId: string | null;
   setEditingEntryId: React.Dispatch<React.SetStateAction<string | null>>;
+  currentPage: number;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -53,6 +55,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return stored ? stored : null;
   });
   const [editingEntryId, setEditingEntryId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   useEffect(() => {
     const stored = localStorage.getItem(APP_LOCAL_STORAGE_ENTRIES_KEY);
@@ -76,7 +79,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return () => clearTimeout(timer);
   }, [isNotificationShown]);
 
-  return <AppContext.Provider value={{ entries, setEntries, notificationContent, setNotificationContent, isNotificationShown, setIsNotificationShown, activeView, setActiveView, animBgUrl, setAnimBgUrl, editingEntryId, setEditingEntryId }}>{children}</AppContext.Provider>;
+  return <AppContext.Provider value={{ entries, setEntries, notificationContent, setNotificationContent, isNotificationShown, setIsNotificationShown, activeView, setActiveView, animBgUrl, setAnimBgUrl, editingEntryId, setEditingEntryId, currentPage, setCurrentPage }}>{children}</AppContext.Provider>;
 }
 
 // ============================================================================

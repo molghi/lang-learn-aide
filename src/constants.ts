@@ -40,3 +40,5 @@ export const APP_LOCAL_STORAGE_ENTRIES_KEY: string = "app_entries";
 export const STYLES_BLOCK_HEADER: string = "text-center text-3xl mb-14 tracking-wide";
 
 export const APP_LOCAL_STORAGE_BG_KEY: string = "app_bg";
+
+export const APP_ENTRIES_PER_PAGE: number = 10;

@@ -1,9 +1,43 @@
-import { STYLES_BLOCK_HEADER, STYLES_GENERAL_BTN } from "../constants.ts";
+import { STYLES_BLOCK_HEADER, STYLES_GENERAL_BTN, APP_ENTRIES_PER_PAGE } from "../constants.ts";
 import { useMyContext } from "../context/AppContext.tsx";
 import EntryCard from "./EntryCard.tsx";
 
 export default function EntriesView() {
-  const { entries } = useMyContext();
+  const { entries, currentPage, setCurrentPage } = useMyContext();
+
+  const totalPages: number = Math.ceil(entries.length / APP_ENTRIES_PER_PAGE);
+
+  // ============================================================================
+
+  type PaginateFlag = "increment" | "decrement";
+  function paginate(flag?: PaginateFlag, pageToShow?: number) {
+    if (flag === undefined && pageToShow === undefined) {
+      throw new Error("Either flag or pageToShow must be provided");
+    }
+    if (flag === "increment") {
+      setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+      return;
+    }
+    if (flag === "decrement") {
+      setCurrentPage((prev) => Math.max(prev - 1, 1));
+      return;
+    }
+    if (typeof pageToShow === "number") {
+      setCurrentPage(pageToShow);
+    }
+  }
+
+  // ============================================================================
+
+  // sort all by date, newest first
+  const sortedEntries = [...entries].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  const startIndex = APP_ENTRIES_PER_PAGE * (currentPage - 1);
+  const endIndex = startIndex + APP_ENTRIES_PER_PAGE;
+
+  const paginatedEntries = sortedEntries.slice(startIndex, endIndex);
+
+  // ============================================================================
 
   return (
     <section className="w-full font-mono text-emerald-100">
@@ -27,14 +61,22 @@ export default function EntriesView() {
         )}
 
         {/* cards container */}
-        <div className="grid gap-8 mb-16">{entries.length > 0 ? [...entries].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((entry) => <EntryCard key={entry.id} entry={entry} />) : <div className="text-center font-mono text-gray italic">You have no entries so far.</div>}</div>
+        <div className="grid gap-8 mb-16">{paginatedEntries.length > 0 ? paginatedEntries.map((entry) => <EntryCard key={entry.id} entry={entry} />) : <div className="text-center font-mono text-gray italic">You have no entries so far.</div>}</div>
 
         {/* pagination */}
         {entries.length > 0 && (
           <div className="flex justify-center mt-6 gap-8 text-sm">
-            <button className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600`}>Prev</button>
-            <button className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600`}>1</button>
-            <button className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600`}>Next</button>
+            <button onClick={() => paginate("decrement")} className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600`}>
+              Prev
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button key={i + 1} className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600`} onClick={() => paginate(undefined, i + 1)}>
+                {i + 1}
+              </button>
+            ))}
+            <button onClick={() => paginate("increment")} className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600`}>
+              Next
+            </button>
           </div>
         )}
       </div>

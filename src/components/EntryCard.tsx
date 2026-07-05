@@ -29,14 +29,13 @@ function getLanguageMeta(code: string) {
 export default function EntryCard({ entry }: { entry: Entry }) {
   const [open, setOpen] = useState<boolean>(false);
   const [image, setImage] = useState<string>("");
-  const { setEditingEntryId, setActiveView } = useMyContext();
+  const { setEditingEntryId, setActiveView, setEntries, setIsNotificationShown, setNotificationContent } = useMyContext();
 
   const langMeta = getLanguageMeta(entry.language);
-  let langCode, langColor, langFlag, langFullName;
+
+  let [langCode, langColor, langFlag, langFullName] = ["", "", "", ""];
   if (langMeta) {
     [langCode, langColor, langFlag, langFullName] = langMeta;
-  } else {
-    [langCode, langColor, langFlag, langFullName] = ["", "", "", ""];
   }
 
   const borderColor = `border-[${langColor}]`;
@@ -47,6 +46,18 @@ export default function EntryCard({ entry }: { entry: Entry }) {
       backdrop-filter: blur(6px) !important;
     }
 `;
+
+  function deleteEntry() {
+    if (!window.confirm(`Are you sure you want to delete this entry?\n\n ${langFlag} ${langCode.toUpperCase()} — ${entry.word}\n\nThis action is irreversible.`)) {
+      return;
+    }
+
+    setEntries((prev) => prev.filter((item) => item.id !== entry.id));
+    setIsNotificationShown(true);
+    setNotificationContent(["success", "Deleted successfully!"]);
+  }
+
+  // ============================================================================
 
   return (
     <div className={`relative border ${borderColor} bg-black/40 p-3 font-mono text-emerald-100`}>
@@ -63,7 +74,7 @@ export default function EntryCard({ entry }: { entry: Entry }) {
         >
           edit
         </button>
-        <button onClick={() => console.log("prompt to delete word")} className="px-2 py-1 text-xs border border-red-500/30 bg-black/40 text-red-300 opacity-60 hover:opacity-100 hover:border-red-400 hover:text-red-200 transition-all duration-200 backdrop-blur-sm rounded-sm">
+        <button onClick={() => deleteEntry()} className="px-2 py-1 text-xs border border-red-500/30 bg-black/40 text-red-300 opacity-60 hover:opacity-100 hover:border-red-400 hover:text-red-200 transition-all duration-200 backdrop-blur-sm rounded-sm">
           delete
         </button>
       </div>

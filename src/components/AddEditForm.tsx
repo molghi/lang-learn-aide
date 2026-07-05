@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useMyContext } from "../context/AppContext.tsx";
 
 export default function AddEditForm() {
-  const { entries, setEntries, setNotificationContent, setIsNotificationShown, editingEntryId } = useMyContext();
+  const { entries, setEntries, setNotificationContent, setIsNotificationShown, editingEntryId, setEditingEntryId, setActiveView } = useMyContext();
 
   useEffect(() => {
     if (!editingEntryId) return;
@@ -14,6 +14,7 @@ export default function AddEditForm() {
       language: entry.language,
       translation: entry.translation,
       definition: entry.definition || "",
+      tag: entry.tag || "",
       hint: entry.hint || "",
       imageUrl: entry.imageUrl || "",
     });
@@ -24,6 +25,7 @@ export default function AddEditForm() {
     language: "",
     translation: "",
     definition: "",
+    tag: "",
     hint: "",
     imageUrl: "",
   });
@@ -104,28 +106,64 @@ export default function AddEditForm() {
 
   const fieldStyles: string = `bg-transparent border-b border-solid border-emerald-800 focus:outline-none p-1`;
 
+  // ============================================================================
+
   function submitForm(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const wordEntry = {
-      id: crypto.randomUUID(),
-      word: formData.word.trim(),
-      language: formData.language.trim(),
-      translation: formData.translation.trim(),
-      definition: formData.definition.trim(),
-      hint: formData.hint.trim(),
-      imageUrl: formData.imageUrl.trim(),
-      createdAt: new Date().toISOString(),
-      modifiedAt: new Date().toISOString(),
-    };
-    console.log("do some validation!");
-    setEntries((prev) => [...prev, wordEntry]);
-    setIsNotificationShown(true);
-    setNotificationContent(["success", "Submitted successfully!"]);
+
+    if (editingEntryId !== null) {
+      // edit entry
+      const wordEntry = {
+        word: formData.word.trim(),
+        language: formData.language.trim(),
+        translation: formData.translation.trim(),
+        definition: formData.definition.trim(),
+        tag: formData.tag.trim(),
+        hint: formData.hint.trim(),
+        imageUrl: formData.imageUrl.trim(),
+        modifiedAt: new Date().toISOString(),
+      };
+      console.warn("VALIDATION NEEDED!");
+      setEntries((prev) =>
+        prev.map((entry) =>
+          entry.id === editingEntryId
+            ? {
+                ...entry,
+                ...wordEntry,
+              }
+            : entry,
+        ),
+      );
+      setIsNotificationShown(true);
+      setNotificationContent(["success", "Edited successfully!"]);
+      setEditingEntryId(null);
+      setActiveView("view");
+    } else {
+      // add entry
+      const wordEntry = {
+        id: crypto.randomUUID(),
+        word: formData.word.trim(),
+        language: formData.language.trim(),
+        translation: formData.translation.trim(),
+        definition: formData.definition.trim(),
+        hint: formData.hint.trim(),
+        imageUrl: formData.imageUrl.trim(),
+        createdAt: new Date().toISOString(),
+        modifiedAt: new Date().toISOString(),
+      };
+      console.warn("VALIDATION NEEDED!");
+      setEntries((prev) => [...prev, wordEntry]);
+      setIsNotificationShown(true);
+      setNotificationContent(["success", "Submitted successfully!"]);
+    }
+
+    // reset form fields
     setFormData({
       word: "",
       language: "",
       translation: "",
       definition: "",
+      tag: "",
       hint: "",
       imageUrl: "",
     });

@@ -6,9 +6,11 @@ import AddEditForm from "./components/AddEditForm.tsx";
 import Notification from "./components/Notification.tsx";
 import EntriesView from "./components/EntriesView.tsx";
 import AnimatedBackground from "./components/AnimatedBackground.tsx";
+import LanguageSelect from "./components/LanguageSelect.tsx";
+import Round from "./components/Round.tsx";
 
 function App() {
-  const { isNotificationShown, activeView, editingEntryId } = useMyContext();
+  const { isNotificationShown, activeView, editingEntryId, practiceEntries, currentRound } = useMyContext();
 
   useEffect(() => {
     document.title = `${APP_NAME} | ${APP_SHORT_SLOGAN}`;
@@ -20,7 +22,8 @@ function App() {
 
       {(activeView === "add" || editingEntryId !== null) && <AddEditForm />}
       {activeView === "view" && editingEntryId === null && <EntriesView />}
-      {activeView === "practice" && <div className="text-center font-mono text-gray">Practice will be here...</div>}
+      {activeView === "practice" && !practiceEntries && <LanguageSelect />}
+      {practiceEntries && typeof currentRound === "number" && <Round roundData={practiceEntries[currentRound]} />}
 
       {isNotificationShown && <Notification />}
 

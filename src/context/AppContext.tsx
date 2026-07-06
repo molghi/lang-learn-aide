@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect } from "react";
-import { APP_LOCAL_STORAGE_ENTRIES_KEY, APP_LOCAL_STORAGE_BG_KEY } from "../constants.ts";
+import { APP_LOCAL_STORAGE_ENTRIES_KEY, APP_LOCAL_STORAGE_BG_KEY, APP_ROUNDS_PER_PRACTICE } from "../constants.ts";
 
 export interface Entry {
   id: string; // unique
@@ -36,6 +36,13 @@ interface AppContextType {
   setEditingEntryId: React.Dispatch<React.SetStateAction<string | null>>;
   currentPage: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  practiceLanguage: string | null;
+  setPracticeLanguage: React.Dispatch<React.SetStateAction<string | null>>;
+  practiceEntries: any[] | null;
+  setPracticeEntries: React.Dispatch<React.SetStateAction<any[] | null>>;
+  gatherPracticeRounds: () => void;
+  currentRound: number | null;
+  setCurrentRound: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -56,6 +63,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   });
   const [editingEntryId, setEditingEntryId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [practiceLanguage, setPracticeLanguage] = useState<string | null>(null);
+  const [practiceEntries, setPracticeEntries] = useState<any[] | null>(null);
+  const [currentRound, setCurrentRound] = useState<number | null>(null);
+
+  const gatherPracticeRounds = () => {
+    if (!practiceLanguage) return;
+    const filtered = entries.filter((entry) => entry.language === practiceLanguage);
+    const arr = [...filtered];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    const selected = arr.slice(0, APP_ROUNDS_PER_PRACTICE);
+    setCurrentRound(0);
+    setPracticeEntries(selected);
+  };
 
   useEffect(() => {
     const stored = localStorage.getItem(APP_LOCAL_STORAGE_ENTRIES_KEY);
@@ -79,7 +102,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return () => clearTimeout(timer);
   }, [isNotificationShown]);
 
-  return <AppContext.Provider value={{ entries, setEntries, notificationContent, setNotificationContent, isNotificationShown, setIsNotificationShown, activeView, setActiveView, animBgUrl, setAnimBgUrl, editingEntryId, setEditingEntryId, currentPage, setCurrentPage }}>{children}</AppContext.Provider>;
+  return <AppContext.Provider value={{ entries, setEntries, notificationContent, setNotificationContent, isNotificationShown, setIsNotificationShown, activeView, setActiveView, animBgUrl, setAnimBgUrl, editingEntryId, setEditingEntryId, currentPage, setCurrentPage, practiceLanguage, setPracticeLanguage, practiceEntries, setPracticeEntries, gatherPracticeRounds, currentRound, setCurrentRound }}>{children}</AppContext.Provider>;
 }
 
 // ============================================================================

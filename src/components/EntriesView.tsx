@@ -49,7 +49,7 @@ export default function EntriesView() {
   const allTags: any[] = entries.map((entry) => entry.tag).filter((entry) => entry);
   const monthYearPeriods: string[] = [...new Set(entries.map((entry) => entry.createdAt.slice(0, 7)))];
   const uniqueLanguageCodes: string[] = [...new Set(entries.map((entry) => entry.language))];
-  const uniqueLanguages = uniqueLanguageCodes.map((code) => {
+  const uniqueLanguageTitles = uniqueLanguageCodes.map((code) => {
     const lang = Object.values(APP_LANGUAGES).find(([c]) => c === code);
     if (!lang) return code;
     const [, , flag, name] = lang;
@@ -65,7 +65,7 @@ export default function EntriesView() {
     return `${monthName} '${shortYear}`;
   };
 
-  const languageOptions = uniqueLanguages.map((label, i) => ({
+  const languageOptions = uniqueLanguageTitles.map((label, i) => ({
     value: uniqueLanguageCodes[i],
     label: "By lang: " + label,
   }));

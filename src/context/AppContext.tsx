@@ -43,6 +43,10 @@ interface AppContextType {
   gatherPracticeRounds: () => void;
   currentRound: number | null;
   setCurrentRound: React.Dispatch<React.SetStateAction<number | null>>;
+  userInputs: string[] | null;
+  setUserInputs: React.Dispatch<React.SetStateAction<string[] | null>>;
+  roundRatings: any[] | null;
+  setRoundRatings: React.Dispatch<React.SetStateAction<any[] | null>>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -66,6 +70,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [practiceLanguage, setPracticeLanguage] = useState<string | null>(null);
   const [practiceEntries, setPracticeEntries] = useState<any[] | null>(null);
   const [currentRound, setCurrentRound] = useState<number | null>(null);
+  const [userInputs, setUserInputs] = useState<string[] | null>(null);
+  const [roundRatings, setRoundRatings] = useState<any[] | null>(null);
 
   const gatherPracticeRounds = () => {
     if (!practiceLanguage) return;
@@ -102,7 +108,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return () => clearTimeout(timer);
   }, [isNotificationShown]);
 
-  return <AppContext.Provider value={{ entries, setEntries, notificationContent, setNotificationContent, isNotificationShown, setIsNotificationShown, activeView, setActiveView, animBgUrl, setAnimBgUrl, editingEntryId, setEditingEntryId, currentPage, setCurrentPage, practiceLanguage, setPracticeLanguage, practiceEntries, setPracticeEntries, gatherPracticeRounds, currentRound, setCurrentRound }}>{children}</AppContext.Provider>;
+  return <AppContext.Provider value={{ entries, setEntries, notificationContent, setNotificationContent, isNotificationShown, setIsNotificationShown, activeView, setActiveView, animBgUrl, setAnimBgUrl, editingEntryId, setEditingEntryId, currentPage, setCurrentPage, practiceLanguage, setPracticeLanguage, practiceEntries, setPracticeEntries, gatherPracticeRounds, currentRound, setCurrentRound, userInputs, setUserInputs, roundRatings, setRoundRatings }}>{children}</AppContext.Provider>;
 }
 
 // ============================================================================

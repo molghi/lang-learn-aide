@@ -43,4 +43,4 @@ export const APP_LOCAL_STORAGE_BG_KEY: string = "app_bg";
 
 export const APP_ENTRIES_PER_PAGE: number = 10;
 
-export const APP_ROUNDS_PER_PRACTICE: number = 5;
+export const APP_ROUNDS_PER_PRACTICE: number = 2;

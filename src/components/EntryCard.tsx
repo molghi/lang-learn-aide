@@ -60,7 +60,7 @@ export default function EntryCard({ entry }: { entry: Entry }) {
   // ============================================================================
 
   return (
-    <div className={`relative border ${borderColor} bg-black/40 p-3 font-mono text-emerald-100`}>
+    <div className={`relative border ${borderColor} bg-black/40 p-3 font-mono text-emerald-100 transition duration-700 hover:shadow-[inset_0_0_40px_rgba(156,163,175,0.4)]`}>
       <style>{lightboxStyles}</style>
 
       {/* Btns */}

@@ -8,6 +8,7 @@ import EntriesView from "./components/EntriesView.tsx";
 import AnimatedBackground from "./components/AnimatedBackground.tsx";
 import LanguageSelect from "./components/LanguageSelect.tsx";
 import Round from "./components/Round.tsx";
+import PracticeSummary from "./components/PracticeSummary.tsx";
 
 function App() {
   const { isNotificationShown, activeView, editingEntryId, practiceEntries, currentRound } = useMyContext();
@@ -16,14 +17,27 @@ function App() {
     document.title = `${APP_NAME} | ${APP_SHORT_SLOGAN}`;
   }, []);
 
+  // SHOW LOGIC
+  const addOrWithEditEntry: boolean = activeView === "add" || editingEntryId !== null;
+  const viewAndNoEdit: boolean = activeView === "view" && editingEntryId === null;
+  const onPracticeScreen: boolean = activeView === "practice";
+  const practiceEntriesDefined: boolean = practiceEntries !== null;
+  const practiceAndNoPracticeEntries: boolean = onPracticeScreen && !practiceEntriesDefined;
+
+  const stillPlaying: boolean = currentRound !== null && practiceEntries !== null && currentRound + 1 <= practiceEntries.length;
+  const finishedPlaying: boolean = currentRound !== null && practiceEntries !== null && currentRound + 1 === practiceEntries.length + 1;
+
   return (
     <div className="pb-[150px] relative">
       <Header />
 
-      {(activeView === "add" || editingEntryId !== null) && <AddEditForm />}
-      {activeView === "view" && editingEntryId === null && <EntriesView />}
-      {activeView === "practice" && !practiceEntries && <LanguageSelect />}
-      {practiceEntries && typeof currentRound === "number" && <Round roundData={practiceEntries[currentRound]} />}
+      {addOrWithEditEntry && <AddEditForm />}
+      {viewAndNoEdit && <EntriesView />}
+      {practiceAndNoPracticeEntries && <LanguageSelect />}
+
+      {onPracticeScreen && currentRound !== null && practiceEntries && stillPlaying && <Round roundData={practiceEntries[currentRound]} />}
+
+      {onPracticeScreen && currentRound !== null && practiceEntries && finishedPlaying && <PracticeSummary />}
 
       {isNotificationShown && <Notification />}
 

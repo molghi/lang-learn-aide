@@ -2,7 +2,7 @@ import { useMyContext } from "../context/AppContext.tsx";
 import { STYLES_BLOCK_HEADER } from "../constants.ts";
 
 export default function PracticeSummary() {
-  const { practiceEntries, userInputs, roundRatings, setRoundRatings, practiceLanguage } = useMyContext();
+  const { practiceEntries, userInputs, roundRatings, setRoundRatings, spacedRepetition, setIsNotificationShown, setNotificationContent, setActiveView, setCurrentRound, setPracticeEntries } = useMyContext();
 
   const btns: any[] = [
     { name: "Poor", title: "You failed to recall this word", difficulty: 3, classes: "border-red-500/30 hover:bg-red-500/10" },
@@ -77,11 +77,13 @@ export default function PracticeSummary() {
       <div className="mt-10 flex justify-end">
         <button
           onClick={() => {
-            console.warn(`do spaced rep sys (edit 'entries', calc 'nextPractice' field or sth like that)
-
-show noti 
-
-throw back to View `);
+            spacedRepetition();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            setIsNotificationShown(true);
+            setNotificationContent(["success", "Results saved!"]);
+            setActiveView("view");
+            setCurrentRound(null);
+            setPracticeEntries(null);
           }}
           disabled={roundRatings?.length !== practiceEntries?.length}
           title={roundRatings?.length !== practiceEntries?.length ? "You must rate each round." : ""}

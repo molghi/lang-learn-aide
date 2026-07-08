@@ -2,7 +2,7 @@ import { APP_NAME, STYLES_GENERAL_BTN } from "../constants.ts";
 import { useMyContext } from "../context/AppContext.tsx";
 
 export default function Header() {
-  const { activeView, setActiveView, editingEntryId, setEditingEntryId } = useMyContext();
+  const { activeView, setActiveView, editingEntryId, setEditingEntryId, setPracticeEntries } = useMyContext();
   const headerBtnStyles: string = STYLES_GENERAL_BTN;
 
   const headerBtnNamesTitles: Record<string, string[]> = {
@@ -23,20 +23,34 @@ export default function Header() {
         <div className="text-lg tracking-wide">{APP_NAME}</div>
 
         <div className="flex gap-8 text-md text-emerald-400">
-          <button onClick={() => setActiveView("add")} className={`${headerBtnStyles} ${activeView === "add" ? "border-solid border-emerald-300" : "border-dashed border-emerald-600"}`} title={headerBtnNamesTitles.addNew[1]}>
+          <button
+            onClick={() => {
+              setActiveView("add");
+              setPracticeEntries(null);
+            }}
+            className={`${headerBtnStyles} ${activeView === "add" ? "border-solid border-emerald-300" : "border-dashed border-emerald-600"}`}
+            title={headerBtnNamesTitles.addNew[1]}
+          >
             {headerBtnNamesTitles.addNew[0]}
           </button>
           <button
             onClick={() => {
               setEditingEntryId(null);
               setActiveView("view");
+              setPracticeEntries(null);
             }}
             className={`${headerBtnStyles} ${activeView === "view" ? "border-solid border-emerald-400" : "border-dashed border-emerald-600"}`}
             title={headerBtnNamesTitles.viewAll[1]}
           >
             {headerBtnNamesTitles.viewAll[0]}
           </button>
-          <button onClick={() => setActiveView("practice")} className={`${headerBtnStyles} ${activeView === "practice" ? "border-solid border-emerald-400" : "border-dashed border-emerald-600"}`} title={headerBtnNamesTitles.practice[1]}>
+          <button
+            onClick={() => {
+              setActiveView("practice");
+            }}
+            className={`${headerBtnStyles} ${activeView === "practice" ? "border-solid border-emerald-400" : "border-dashed border-emerald-600"}`}
+            title={headerBtnNamesTitles.practice[1]}
+          >
             {headerBtnNamesTitles.practice[0]}
           </button>
         </div>

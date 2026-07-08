@@ -9,6 +9,7 @@ import AnimatedBackground from "./components/AnimatedBackground.tsx";
 import LanguageSelect from "./components/LanguageSelect.tsx";
 import Round from "./components/Round.tsx";
 import PracticeSummary from "./components/PracticeSummary.tsx";
+import NoPractice from "./components/NoPractice.tsx";
 
 function App() {
   const { isNotificationShown, activeView, editingEntryId, practiceEntries, currentRound } = useMyContext();
@@ -34,10 +35,11 @@ function App() {
       {addOrWithEditEntry && <AddEditForm />}
       {viewAndNoEdit && <EntriesView />}
       {practiceAndNoPracticeEntries && <LanguageSelect />}
+      {onPracticeScreen && practiceEntries && practiceEntries.length === 0 && <NoPractice />}
 
-      {onPracticeScreen && currentRound !== null && practiceEntries && stillPlaying && <Round roundData={practiceEntries[currentRound]} />}
+      {onPracticeScreen && currentRound !== null && practiceEntries && practiceEntries.length > 0 && stillPlaying && <Round roundData={practiceEntries[currentRound]} />}
 
-      {onPracticeScreen && currentRound !== null && practiceEntries && finishedPlaying && <PracticeSummary />}
+      {onPracticeScreen && currentRound !== null && practiceEntries && practiceEntries.length > 0 && finishedPlaying && <PracticeSummary />}
 
       {isNotificationShown && <Notification />}
 

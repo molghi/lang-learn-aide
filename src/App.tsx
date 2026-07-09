@@ -10,6 +10,8 @@ import LanguageSelect from "./components/LanguageSelect.tsx";
 import Round from "./components/Round.tsx";
 import PracticeSummary from "./components/PracticeSummary.tsx";
 import NoPractice from "./components/NoPractice.tsx";
+import ExportImport from "./components/ExportImport.tsx";
+import BulkAddEasy from "./components/BulkAddEasy.tsx";
 
 function App() {
   const { isNotificationShown, activeView, editingEntryId, practiceEntries, currentRound } = useMyContext();
@@ -33,6 +35,7 @@ function App() {
       <Header />
 
       {addOrWithEditEntry && <AddEditForm />}
+      {activeView === "bulk-add" && <BulkAddEasy />}
       {viewAndNoEdit && <EntriesView />}
       {practiceAndNoPracticeEntries && <LanguageSelect />}
       {onPracticeScreen && practiceEntries && practiceEntries.length === 0 && <NoPractice />}
@@ -43,6 +46,7 @@ function App() {
 
       {isNotificationShown && <Notification />}
 
+      <ExportImport />
       <AnimatedBackground />
     </div>
   );

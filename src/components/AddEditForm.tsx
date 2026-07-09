@@ -1,10 +1,12 @@
 import { STYLES_GENERAL_BTN, APP_LANGUAGES, STYLES_BLOCK_HEADER } from "../constants.ts";
 import { useState, useEffect } from "react";
 import { useMyContext } from "../context/AppContext.tsx";
+import { APP_LOCAL_STORAGE_LAST_LANG_KEY } from "../constants.ts";
 
 export default function AddEditForm() {
-  const { entries, setEntries, setNotificationContent, setIsNotificationShown, editingEntryId, setEditingEntryId, setActiveView } = useMyContext();
+  const { entries, setEntries, setNotificationContent, setIsNotificationShown, editingEntryId, setEditingEntryId, setActiveView, setLastSelectedLang, lastSelectedLang } = useMyContext();
 
+  // set form data if in Edit mode
   useEffect(() => {
     if (!editingEntryId) return;
     const entry = entries.find((e) => e.id === editingEntryId);
@@ -19,6 +21,17 @@ export default function AddEditForm() {
       imageUrl: entry.imageUrl || "",
     });
   }, [editingEntryId, entries]);
+
+  // set last selected language if not in Edit mode
+  useEffect(() => {
+    const savedLang = localStorage.getItem(APP_LOCAL_STORAGE_LAST_LANG_KEY);
+    if (savedLang && !editingEntryId) {
+      setFormData((prev) => ({
+        ...prev,
+        language: savedLang,
+      }));
+    }
+  }, [entries]);
 
   const [formData, setFormData] = useState({
     word: "",
@@ -123,7 +136,7 @@ export default function AddEditForm() {
         imageUrl: formData.imageUrl.trim(),
         modifiedAt: new Date().toISOString(),
       };
-      console.warn("VALIDATION NEEDED!");
+      console.warn("VALIDATION NEEDED");
       setEntries((prev) =>
         prev.map((entry) =>
           entry.id === editingEntryId
@@ -151,7 +164,7 @@ export default function AddEditForm() {
         createdAt: new Date().toISOString(),
         modifiedAt: new Date().toISOString(),
       };
-      console.warn("VALIDATION NEEDED!");
+      console.warn("VALIDATION NEEDED");
       setEntries((prev) => [...prev, wordEntry]);
       setIsNotificationShown(true);
       setNotificationContent(["success", "Submitted successfully!"]);
@@ -173,7 +186,20 @@ export default function AddEditForm() {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="w-full max-w-xl font-mono text-emerald-400">
+      <div className="w-full max-w-xl font-mono text-emerald-400 relative">
+        {/* Bulk Add btn */}
+        <div className="absolute right-0 top-1">
+          <button
+            onClick={() => {
+              setActiveView("bulk-add");
+            }}
+            title="Add multiple entries at once"
+            className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600 opacity-50 transition hover:opacity-100`}
+          >
+            Bulk Add
+          </button>
+        </div>
+
         <h2 className={STYLES_BLOCK_HEADER}>{editingEntryId ? "EDIT" : "ADD"} ENTRY</h2>
 
         <form onSubmit={submitForm} className="grid grid-cols-2 gap-x-8 gap-y-8">
@@ -183,7 +209,19 @@ export default function AddEditForm() {
               return (
                 <div className="flex gap-2" key={f.name}>
                   {f.isRequired && <span style={{ color: "red" }}>*</span>}
-                  <input value={valueGetter(f.name as keyof typeof formData)} onChange={(e) => valueSetter(f.name as keyof typeof formData, e.target.value)} name={f.name} type={f.type} placeholder={f.placeholder} required={f.isRequired} className={`${fieldStyles} w-full`} autoFocus={i === 0} autoComplete="off" />
+                  <input
+                    value={valueGetter(f.name as keyof typeof formData)}
+                    onChange={(e) => {
+                      valueSetter(f.name as keyof typeof formData, e.target.value);
+                    }}
+                    name={f.name}
+                    type={f.type}
+                    placeholder={f.placeholder}
+                    required={f.isRequired}
+                    className={`${fieldStyles} w-full focus:border-emerald-200 transition`}
+                    autoFocus={i === 0}
+                    autoComplete="off"
+                  />
                 </div>
               );
             } else {
@@ -191,7 +229,16 @@ export default function AddEditForm() {
               return (
                 <div className="flex gap-2" key={f.name}>
                   {f.isRequired && <span style={{ color: "red" }}>*</span>}
-                  <select value={valueGetter(f.name as keyof typeof formData)} onChange={(e) => valueSetter(f.name as keyof typeof formData, e.target.value)} name={f.name} required={f.isRequired} className="bg-transparent border-b border-solid border-emerald-800 focus:outline-none w-full p-1 cursor-pointer" defaultValue="">
+                  <select
+                    value={formData.language}
+                    onChange={(e) => {
+                      valueSetter(f.name as keyof typeof formData, e.target.value);
+                      setLastSelectedLang(e.target.value);
+                    }}
+                    name={f.name}
+                    required={f.isRequired}
+                    className="bg-transparent border-b border-solid border-emerald-800 focus:outline-none w-full p-1 cursor-pointer"
+                  >
                     <option value="" disabled>
                       {f.placeholder}
                     </option>

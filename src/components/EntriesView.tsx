@@ -133,7 +133,16 @@ export default function EntriesView() {
         )}
 
         {/* cards container */}
-        <div className="grid gap-8 mb-16">{paginatedEntries.length > 0 ? paginatedEntries.map((entry) => <EntryCard key={entry.id} entry={entry} />) : <div className="text-center font-mono text-gray italic">You have no entries so far.</div>}</div>
+        <div className="grid gap-8 mb-16">
+          {paginatedEntries.length > 0 ? (
+            paginatedEntries.map((entry) => <EntryCard key={entry.id} entry={entry} />)
+          ) : (
+            <div className="text-center font-mono text-gray italic leading-9 text-emerald-100">
+              You have no entries so far. <br />
+              Add your first entry to begin reviewing and practicing.
+            </div>
+          )}
+        </div>
 
         {/* pagination */}
         {filteredEntries.length > 0 && (

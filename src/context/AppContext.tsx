@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect } from "react";
-import { APP_LOCAL_STORAGE_ENTRIES_KEY, APP_LOCAL_STORAGE_BG_KEY, APP_ROUNDS_PER_PRACTICE } from "../constants.ts";
+import { APP_LOCAL_STORAGE_ENTRIES_KEY, APP_LOCAL_STORAGE_BG_KEY, APP_ROUNDS_PER_PRACTICE, APP_LOCAL_STORAGE_LAST_LANG_KEY } from "../constants.ts";
 
 export interface Entry {
   id: string; // unique
@@ -20,7 +20,7 @@ export interface Entry {
 
 type NotificationType = "success" | "error" | "warning";
 
-type AppView = "add" | "view" | "practice";
+type AppView = "add" | "view" | "practice" | "bulk-add";
 
 interface AppContextType {
   entries: Entry[];
@@ -49,6 +49,8 @@ interface AppContextType {
   roundRatings: any[] | null;
   setRoundRatings: React.Dispatch<React.SetStateAction<any[] | null>>;
   spacedRepetition: () => void;
+  lastSelectedLang: string | null;
+  setLastSelectedLang: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -74,6 +76,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [currentRound, setCurrentRound] = useState<number | null>(null);
   const [userInputs, setUserInputs] = useState<string[] | null>(null);
   const [roundRatings, setRoundRatings] = useState<any[] | null>(null);
+  const [lastSelectedLang, setLastSelectedLang] = useState<string | null>(() => {
+    const stored = localStorage.getItem(APP_LOCAL_STORAGE_LAST_LANG_KEY);
+    return stored ? stored : null;
+  });
 
   // =========================
 
@@ -162,7 +168,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return () => clearTimeout(timer);
   }, [isNotificationShown]);
 
-  return <AppContext.Provider value={{ entries, setEntries, notificationContent, setNotificationContent, isNotificationShown, setIsNotificationShown, activeView, setActiveView, animBgUrl, setAnimBgUrl, editingEntryId, setEditingEntryId, currentPage, setCurrentPage, practiceLanguage, setPracticeLanguage, practiceEntries, setPracticeEntries, gatherPracticeRounds, currentRound, setCurrentRound, userInputs, setUserInputs, roundRatings, setRoundRatings, spacedRepetition }}>{children}</AppContext.Provider>;
+  // set last selected language
+  useEffect(() => {
+    localStorage.setItem(APP_LOCAL_STORAGE_LAST_LANG_KEY, lastSelectedLang || "");
+  }, [lastSelectedLang]);
+
+  return <AppContext.Provider value={{ entries, setEntries, notificationContent, setNotificationContent, isNotificationShown, setIsNotificationShown, activeView, setActiveView, animBgUrl, setAnimBgUrl, editingEntryId, setEditingEntryId, currentPage, setCurrentPage, practiceLanguage, setPracticeLanguage, practiceEntries, setPracticeEntries, gatherPracticeRounds, currentRound, setCurrentRound, userInputs, setUserInputs, roundRatings, setRoundRatings, spacedRepetition, lastSelectedLang, setLastSelectedLang }}>{children}</AppContext.Provider>;
 }
 
 // ============================================================================

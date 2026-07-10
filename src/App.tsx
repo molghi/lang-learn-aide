@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { APP_NAME, APP_SHORT_SLOGAN, APP_ENTRIES_PER_PAGE } from "./constants.ts";
+import { APP_NAME, APP_SHORT_SLOGAN } from "./constants.ts";
 import { useMyContext } from "./context/AppContext.tsx";
 import Header from "./components/Header.tsx";
 import AddEditForm from "./components/AddEditForm.tsx";
@@ -14,7 +14,7 @@ import Footer from "./components/Footer.tsx";
 import About from "./components/About.tsx";
 
 function App() {
-  const { isNotificationShown, activeView, editingEntryId, practiceEntries, currentRound, setActiveView, setPracticeEntries, setPracticeLanguage, setEditingEntryId, paginate, entries } = useMyContext();
+  const { isNotificationShown, activeView, editingEntryId, practiceEntries, currentRound, setActiveView, setPracticeEntries, setPracticeLanguage, setEditingEntryId } = useMyContext();
 
   useEffect(() => {
     document.title = `${APP_NAME} | ${APP_SHORT_SLOGAN}`;

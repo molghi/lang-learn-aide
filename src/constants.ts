@@ -2,7 +2,7 @@
 
 export const APP_NAME: string = "Langer";
 
-export const APP_SHORT_SLOGAN: string = "Your language learning aide";
+export const APP_SHORT_SLOGAN: string = "Your language learning companion";
 
 export const STYLES_GENERAL_BTN: string = "hover:text-emerald-200 border-b  hover:border-emerald-200 transition-all duration-200 ease-out"; // border-dashed border-emerald-600
 

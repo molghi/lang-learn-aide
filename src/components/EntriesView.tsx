@@ -9,7 +9,7 @@ export default function EntriesView() {
   const prevBtn = useRef<HTMLButtonElement | null>(null);
   const nextBtn = useRef<HTMLButtonElement | null>(null);
 
-  const totalPages: number = Math.ceil(entries.length / APP_ENTRIES_PER_PAGE);
+  // const totalPages: number = Math.ceil(entries.length / APP_ENTRIES_PER_PAGE);
 
   // ============================================================================
 

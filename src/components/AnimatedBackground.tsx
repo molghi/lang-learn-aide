@@ -68,8 +68,8 @@ export default function AnimatedBackground() {
     { name: "Solaris", url: sun2Gif },
   ];
 
-  const storedInLs = localStorage.getItem(APP_LOCAL_STORAGE_BG_KEY);
-  const initialValue = storedInLs === "null" ? "" : storedInLs;
+  // const storedInLs = localStorage.getItem(APP_LOCAL_STORAGE_BG_KEY);
+  // const initialValue = storedInLs === "null" ? "" : storedInLs;
 
   return (
     <>

@@ -4,7 +4,7 @@ import { useMyContext } from "../context/AppContext.tsx";
 import { APP_LOCAL_STORAGE_LAST_LANG_KEY } from "../constants.ts";
 
 export default function AddEditForm() {
-  const { entries, setEntries, setNotificationContent, setIsNotificationShown, editingEntryId, setEditingEntryId, setActiveView, setLastSelectedLang, lastSelectedLang } = useMyContext();
+  const { entries, setEntries, setNotificationContent, setIsNotificationShown, editingEntryId, setEditingEntryId, setActiveView, setLastSelectedLang } = useMyContext();
 
   // set form data if in Edit mode
   useEffect(() => {
@@ -255,7 +255,7 @@ export default function AddEditForm() {
                     <option value="" disabled>
                       {f.placeholder}
                     </option>
-                    {Object.entries(APP_LANGUAGES).map(([label, [code, color, flag]]) => (
+                    {Object.entries(APP_LANGUAGES).map(([label, [code, _, flag]]) => (
                       <option key={code} value={code}>
                         {flag} {label.charAt(0).toUpperCase() + label.slice(1)}
                       </option>

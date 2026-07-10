@@ -1,4 +1,4 @@
-# Language learning aide
+# Language learning companion
 
 A small and minimalist language learning companion designed to help you collect, review, and remember new words. It lets you build your personal vocabulary archive and strengthen recall through practice sessions powered by spaced repetition.
 

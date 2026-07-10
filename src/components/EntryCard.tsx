@@ -54,13 +54,13 @@ export default function EntryCard({ entry }: { entry: Entry }) {
 
     setEntries((prev) => prev.filter((item) => item.id !== entry.id));
     setIsNotificationShown(true);
-    setNotificationContent(["success", "Deleted successfully!"]);
+    setNotificationContent(["success", "Entry deleted"]);
   }
 
   // ============================================================================
 
   return (
-    <div className={`relative border ${borderColor} bg-black/40 p-3 font-mono text-emerald-100 transition duration-700 hover:shadow-[inset_0_0_40px_rgba(156,163,175,0.4)]`}>
+    <div className={`relative border rounded ${borderColor} bg-black/40 hover:bg-black/70 p-3 pt-9 font-mono text-emerald-100 transition duration-700 hover:shadow-[inset_0_0_40px_rgba(156,163,175,0.4)] sm:pt-3`}>
       <style>{lightboxStyles}</style>
 
       {/* Btns */}
@@ -89,7 +89,7 @@ export default function EntryCard({ entry }: { entry: Entry }) {
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-emerald-200/80">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4 sm:gap-y-1 text-sm text-emerald-200/80">
         {entry.translation && (
           <div className="flex gap-2 items-start">
             <span className="opacity-50">translation:</span>
@@ -145,7 +145,7 @@ export default function EntryCard({ entry }: { entry: Entry }) {
         )}
 
         {entry.createdAt && (
-          <div className="flex gap-2 text-[12px]">
+          <div className="flex gap-2 text-[12px] transition opacity-50 hover:opacity-100">
             <span className="opacity-50">created:</span>
             <span>{formatDate(entry.createdAt)}</span>
           </div>
@@ -157,6 +157,13 @@ export default function EntryCard({ entry }: { entry: Entry }) {
             <span>{formatDate(entry.modifiedAt)}</span>
           </div>
         )} */}
+
+        {entry.note && (
+          <div className="flex gap-2">
+            <span className="opacity-50">note:</span>
+            <span>{entry.note}</span>
+          </div>
+        )}
 
         {entry.lastPracticed && (
           <div className="flex gap-2 text-[12px]">

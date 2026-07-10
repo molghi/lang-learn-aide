@@ -19,6 +19,7 @@ export default function AddEditForm() {
       tag: entry.tag || "",
       hint: entry.hint || "",
       imageUrl: entry.imageUrl || "",
+      note: entry.note || "",
     });
   }, [editingEntryId, entries]);
 
@@ -41,6 +42,7 @@ export default function AddEditForm() {
     tag: "",
     hint: "",
     imageUrl: "",
+    note: "",
   });
 
   interface Field {
@@ -71,14 +73,14 @@ export default function AddEditForm() {
       label: "word",
       isRequired: true,
       type: "text",
-      placeholder: "Word",
+      placeholder: "Word or phrase",
     },
     {
       name: "language",
       label: "language",
       isRequired: true,
       type: "select",
-      placeholder: "Language",
+      placeholder: "Entry language",
     },
     {
       name: "translation",
@@ -99,7 +101,7 @@ export default function AddEditForm() {
       label: "tag",
       isRequired: false,
       type: "text",
-      placeholder: "Tag", // tag, category, part of speech, topic
+      placeholder: "Tag, category, topic", // tag, category, part of speech, topic
     },
     {
       name: "hint",
@@ -114,6 +116,13 @@ export default function AddEditForm() {
       isRequired: false,
       type: "url",
       placeholder: "Web image URL",
+    },
+    {
+      name: "note",
+      label: "note",
+      isRequired: false,
+      type: "text",
+      placeholder: "Note",
     },
   ];
 
@@ -134,6 +143,7 @@ export default function AddEditForm() {
         tag: formData.tag.trim(),
         hint: formData.hint.trim(),
         imageUrl: formData.imageUrl.trim(),
+        note: formData.note.trim(),
         modifiedAt: new Date().toISOString(),
       };
       console.warn("VALIDATION NEEDED");
@@ -148,7 +158,7 @@ export default function AddEditForm() {
         ),
       );
       setIsNotificationShown(true);
-      setNotificationContent(["success", "Edited successfully!"]);
+      setNotificationContent(["success", "Entry edited"]);
       setEditingEntryId(null);
       setActiveView("view");
     } else {
@@ -167,7 +177,7 @@ export default function AddEditForm() {
       console.warn("VALIDATION NEEDED");
       setEntries((prev) => [...prev, wordEntry]);
       setIsNotificationShown(true);
-      setNotificationContent(["success", "Submitted successfully!"]);
+      setNotificationContent(["success", "Entry added"]);
     }
 
     // reset form fields
@@ -179,30 +189,33 @@ export default function AddEditForm() {
       tag: "",
       hint: "",
       imageUrl: "",
+      note: "",
     });
   }
 
   // ============================================================================
 
   return (
-    <div className="w-full flex justify-center">
+    <div className="w-full flex justify-center px-4">
       <div className="w-full max-w-xl font-mono text-emerald-400 relative">
         {/* Bulk Add btn */}
-        <div className="absolute right-0 top-1">
-          <button
-            onClick={() => {
-              setActiveView("bulk-add");
-            }}
-            title="Add multiple entries at once"
-            className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600 opacity-50 transition hover:opacity-100`}
-          >
-            Bulk Add
-          </button>
-        </div>
+        {!editingEntryId && (
+          <div className="absolute right-0 sm:top-1 top-12">
+            <button
+              onClick={() => {
+                setActiveView("bulk-add");
+              }}
+              title="Add multiple entries at once"
+              className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600 opacity-50 transition hover:opacity-100`}
+            >
+              Bulk Add
+            </button>
+          </div>
+        )}
 
         <h2 className={STYLES_BLOCK_HEADER}>{editingEntryId ? "EDIT" : "ADD"} ENTRY</h2>
 
-        <form onSubmit={submitForm} className="grid grid-cols-2 gap-x-8 gap-y-8">
+        <form onSubmit={submitForm} className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
           {fields.map((f, i) => {
             if (f.type !== "select") {
               // return input text or url
@@ -237,7 +250,7 @@ export default function AddEditForm() {
                     }}
                     name={f.name}
                     required={f.isRequired}
-                    className="bg-transparent border-b border-solid border-emerald-800 focus:outline-none w-full p-1 cursor-pointer"
+                    className="bg-transparent border-b border-solid border-emerald-800 focus:outline-none w-full p-1 cursor-pointer focus:border-emerald-200 transition placeholder:text-gray-500"
                   >
                     <option value="" disabled>
                       {f.placeholder}
@@ -253,7 +266,8 @@ export default function AddEditForm() {
             }
           })}
 
-          <div className="col-span-2 flex justify-end pt-4">
+          {/* btns */}
+          <div className="md:col-span-2 flex sm:justify-end justify-center pt-4">
             {editingEntryId && (
               <button
                 className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600 mr-auto text-red-700 border-red-700 hover:text-[red] hover:border-[red]`}

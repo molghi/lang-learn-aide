@@ -1,4 +1,4 @@
-import { APP_LOCAL_STORAGE_ENTRIES_KEY, APP_NAME } from "../constants.ts";
+import { APP_LOCAL_STORAGE_ENTRIES_KEY, APP_NAME, STYLES_GENERAL_BTN } from "../constants.ts";
 import { useMyContext } from "../context/AppContext.tsx";
 
 export default function ExportImport() {
@@ -119,12 +119,15 @@ export default function ExportImport() {
   // ============================================================================
 
   return (
-    <div className="fixed bottom-6 right-6 flex gap-3 font-mono text-sm opacity-50 transition hover:opacity-100">
-      <button onClick={() => exportEntries()} title="Export your entries data" className="rounded border border-emerald-500/30 bg-emerald-900/10 px-4 py-1 text-emerald-100 transition hover:bg-emerald-500/10">
+    <div className="flex gap-6 font-mono text-sm opacity-30 transition hover:opacity-100 justify-center">
+      {/* fixed bottom-6 right-6  */}
+      <button onClick={() => exportEntries()} title="Export your entries data" className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600`}>
+        {/* className="rounded border border-emerald-500/30 bg-emerald-900/10 px-4 py-1 text-emerald-100 transition hover:bg-emerald-500/10" */}
         Export
       </button>
 
-      <button onClick={() => importEntries()} title="Restore previously exported entries data" className="rounded border border-cyan-500/30 bg-cyan-900/10 px-4 py-1 text-cyan-100 transition hover:bg-cyan-500/10">
+      <button onClick={() => importEntries()} title="Restore previously exported entries data" className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600`}>
+        {/* className="rounded border border-cyan-500/30 bg-cyan-900/10 px-4 py-1 text-cyan-100 transition hover:bg-cyan-500/10" */}
         Import
       </button>
     </div>

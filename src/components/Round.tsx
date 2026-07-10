@@ -22,7 +22,7 @@ export default function Round({ roundData }: RoundProps) {
   }, [currentRound]);
 
   return (
-    <div className="mx-auto max-w-xl font-mono text-emerald-100">
+    <div className="mx-auto max-w-xl font-mono text-emerald-100 px-4">
       {/* top progress */}
       <div className="mb-10 flex gap-5 items-center justify-between">
         <span title={activeLanguageEntry && activeLanguageEntry[3]} className="text-3xl">
@@ -66,24 +66,25 @@ export default function Round({ roundData }: RoundProps) {
       )}
 
       {/* input */}
-      <input ref={inputRef} value={roundInput} onChange={(e) => setRoundInput(e.target.value)} autoFocus className="w-full rounded border border-emerald-500/30 bg-black/40 px-3 py-2 text-emerald-100 outline-none focus:border-emerald-400" placeholder="Type your answer..." />
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          setCurrentRound((num) => (num !== null ? num + 1 : null));
+          setUserInputs((prev) => {
+            if (Array.isArray(prev)) return [...prev, roundInput.trim()];
+            else return [roundInput.trim()];
+          });
+        }}
+      >
+        <input required ref={inputRef} value={roundInput} onChange={(e) => setRoundInput(e.target.value)} autoFocus className="w-full rounded border border-emerald-500/30 bg-black/40 px-3 py-2 text-emerald-100 outline-none focus:border-emerald-400" placeholder="Type your answer..." />
 
-      {/* continue */}
-      <div className="mt-10 flex justify-end">
-        <button
-          disabled={!roundInput}
-          onClick={() => {
-            setCurrentRound((num) => (num !== null ? num + 1 : null));
-            setUserInputs((prev) => {
-              if (Array.isArray(prev)) return [...prev, roundInput.trim()];
-              else return [roundInput.trim()];
-            });
-          }}
-          className="rounded border border-emerald-500/40 bg-emerald-500/10 px-5 py-2 text-emerald-100 transition hover:bg-emerald-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
-        >
-          {currentRound && currentRound + 1 === practiceEntries?.length ? "Finish" : "Continue"}
-        </button>
-      </div>
+        {/* continue btn */}
+        <div className="mt-10 flex justify-end">
+          <button type="submit" disabled={!roundInput} className="rounded border border-emerald-500/40 bg-emerald-500/10 px-5 py-2 text-emerald-100 transition hover:bg-emerald-500/20 disabled:opacity-40 disabled:cursor-not-allowed">
+            {currentRound && currentRound + 1 === practiceEntries?.length ? "Finish" : "Continue"}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

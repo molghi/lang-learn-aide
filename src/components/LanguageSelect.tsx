@@ -18,7 +18,9 @@ export default function LanguageSelect() {
   }, []);
 
   return (
-    <div className="mx-auto max-w-lg rounded border border-emerald-500/30 bg-black/40 p-6 font-mono">
+    <div className="mx-auto max-w-lg rounded font-mono px-4">
+      {/* border border-emerald-500/30 bg-black/40 p-6  */}
+
       {/* <h2 className="mb-6 text-xl text-emerald-200">Select a language</h2> */}
       <h2 className={`${STYLES_BLOCK_HEADER} text-emerald-400 mb-3`}>SELECT LANGUAGE</h2>
 
@@ -47,7 +49,7 @@ export default function LanguageSelect() {
 
       <div className="mt-6 flex justify-end">
         {uniqueLanguageTitles.length > 0 && (
-          <button disabled={!practiceLanguage} onClick={() => gatherPracticeRounds()} className="rounded border border-emerald-500/40 bg-emerald-500/10 px-5 py-2 text-emerald-100 transition hover:bg-emerald-500/20 disabled:opacity-40 disabled:cursor-not-allowed">
+          <button disabled={!practiceLanguage} title={!practiceLanguage ? "Please select a language first" : ""} onClick={() => gatherPracticeRounds()} className="rounded border border-emerald-500/40 bg-emerald-500/10 px-5 py-2 text-emerald-100 transition hover:bg-emerald-500/20 disabled:opacity-40 disabled:cursor-not-allowed">
             Continue
           </button>
         )}

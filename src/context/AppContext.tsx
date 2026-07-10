@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect } from "react";
-import { APP_LOCAL_STORAGE_ENTRIES_KEY, APP_LOCAL_STORAGE_BG_KEY, APP_ROUNDS_PER_PRACTICE, APP_LOCAL_STORAGE_LAST_LANG_KEY } from "../constants.ts";
+import { APP_LOCAL_STORAGE_ENTRIES_KEY, APP_LOCAL_STORAGE_BG_KEY, APP_ROUNDS_PER_PRACTICE, APP_LOCAL_STORAGE_LAST_LANG_KEY, APP_ENTRIES_PER_PAGE } from "../constants.ts";
 
 export interface Entry {
   id: string; // unique
@@ -16,11 +16,12 @@ export interface Entry {
   nextPractice?: number;
   ease?: number; // for spaced rep sys
   repetitionCount?: number; // how many times practiced this word
+  note?: string;
 }
 
 type NotificationType = "success" | "error" | "warning";
 
-type AppView = "add" | "view" | "practice" | "bulk-add";
+type AppView = "add" | "view" | "practice" | "bulk-add" | "about";
 
 interface AppContextType {
   entries: Entry[];
@@ -51,6 +52,7 @@ interface AppContextType {
   spacedRepetition: () => void;
   lastSelectedLang: string | null;
   setLastSelectedLang: React.Dispatch<React.SetStateAction<string | null>>;
+  paginate: (filteredEntriesLength: number, flag?: "increment" | "decrement", pageToShow?: number) => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -141,6 +143,33 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       return updated ?? entry;
     });
     setEntries(updatedEntries);
+    setCurrentRound(null);
+    setPracticeEntries(null);
+    setUserInputs(null);
+    setRoundRatings(null);
+  }
+
+  // =========================
+
+  type PaginateFlag = "increment" | "decrement";
+
+  function paginate(filteredEntriesLength: number, flag?: PaginateFlag, pageToShow?: number) {
+    const totalPages: number = Math.ceil(filteredEntriesLength / APP_ENTRIES_PER_PAGE);
+
+    if (flag === undefined && pageToShow === undefined) {
+      throw new Error("Either flag or pageToShow must be provided");
+    }
+    if (flag === "increment") {
+      setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+      return;
+    }
+    if (flag === "decrement") {
+      setCurrentPage((prev) => Math.max(prev - 1, 1));
+      return;
+    }
+    if (typeof pageToShow === "number") {
+      setCurrentPage(pageToShow);
+    }
   }
 
   // =========================
@@ -173,7 +202,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem(APP_LOCAL_STORAGE_LAST_LANG_KEY, lastSelectedLang || "");
   }, [lastSelectedLang]);
 
-  return <AppContext.Provider value={{ entries, setEntries, notificationContent, setNotificationContent, isNotificationShown, setIsNotificationShown, activeView, setActiveView, animBgUrl, setAnimBgUrl, editingEntryId, setEditingEntryId, currentPage, setCurrentPage, practiceLanguage, setPracticeLanguage, practiceEntries, setPracticeEntries, gatherPracticeRounds, currentRound, setCurrentRound, userInputs, setUserInputs, roundRatings, setRoundRatings, spacedRepetition, lastSelectedLang, setLastSelectedLang }}>{children}</AppContext.Provider>;
+  return <AppContext.Provider value={{ entries, setEntries, notificationContent, setNotificationContent, isNotificationShown, setIsNotificationShown, activeView, setActiveView, animBgUrl, setAnimBgUrl, editingEntryId, setEditingEntryId, currentPage, setCurrentPage, practiceLanguage, setPracticeLanguage, practiceEntries, setPracticeEntries, gatherPracticeRounds, currentRound, setCurrentRound, userInputs, setUserInputs, roundRatings, setRoundRatings, spacedRepetition, lastSelectedLang, setLastSelectedLang, paginate }}>{children}</AppContext.Provider>;
 }
 
 // ============================================================================

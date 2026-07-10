@@ -3,10 +3,13 @@ import { useMyContext } from "../context/AppContext.tsx";
 import { useEffect, useState } from "react";
 
 export default function NoPractice() {
-  const { entries } = useMyContext();
+  const { entries, practiceLanguage } = useMyContext();
   const [now, setNow] = useState("");
 
-  const nextPracticeEntry = entries.filter((entry) => entry.nextPractice).sort((a, b) => a.nextPractice! - b.nextPractice!)[0];
+  const nextPracticeEntry = entries
+    .filter((entry) => entry.language === practiceLanguage)
+    .filter((entry) => entry.nextPractice)
+    .sort((a, b) => a.nextPractice! - b.nextPractice!)[0];
 
   const timeFormatOptions: Intl.DateTimeFormatOptions = {
     year: "numeric",
@@ -32,10 +35,10 @@ export default function NoPractice() {
   }, []);
 
   return (
-    <div className="mx-auto flex flex-col items-center text-center font-mono">
+    <div className="mx-auto flex flex-col items-center text-center font-mono px-4">
       <h1 className={`${STYLES_BLOCK_HEADER} text-emerald-400 uppercase mb-9`}>No Practice for Now</h1>
 
-      <p className="leading-8 text-emerald-200/100 mb-12">
+      <p className="sm:leading-8 leading-6 text-emerald-200/100 mb-12 text-sm sm:text-md">
         All available entries in the selected language have already been reviewed. <br /> Add new words to continue practicing now, or return when your next review is due.
       </p>
 

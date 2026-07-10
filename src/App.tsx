@@ -1,20 +1,20 @@
 import { useEffect } from "react";
-import { APP_NAME, APP_SHORT_SLOGAN } from "./constants.ts";
+import { APP_NAME, APP_SHORT_SLOGAN, APP_ENTRIES_PER_PAGE } from "./constants.ts";
 import { useMyContext } from "./context/AppContext.tsx";
 import Header from "./components/Header.tsx";
 import AddEditForm from "./components/AddEditForm.tsx";
 import Notification from "./components/Notification.tsx";
 import EntriesView from "./components/EntriesView.tsx";
-import AnimatedBackground from "./components/AnimatedBackground.tsx";
 import LanguageSelect from "./components/LanguageSelect.tsx";
 import Round from "./components/Round.tsx";
 import PracticeSummary from "./components/PracticeSummary.tsx";
 import NoPractice from "./components/NoPractice.tsx";
-import ExportImport from "./components/ExportImport.tsx";
 import BulkAddEasy from "./components/BulkAddEasy.tsx";
+import Footer from "./components/Footer.tsx";
+import About from "./components/About.tsx";
 
 function App() {
-  const { isNotificationShown, activeView, editingEntryId, practiceEntries, currentRound } = useMyContext();
+  const { isNotificationShown, activeView, editingEntryId, practiceEntries, currentRound, setActiveView, setPracticeEntries, setPracticeLanguage, setEditingEntryId, paginate, entries } = useMyContext();
 
   useEffect(() => {
     document.title = `${APP_NAME} | ${APP_SHORT_SLOGAN}`;
@@ -30,24 +30,71 @@ function App() {
   const stillPlaying: boolean = currentRound !== null && practiceEntries !== null && currentRound + 1 <= practiceEntries.length;
   const finishedPlaying: boolean = currentRound !== null && practiceEntries !== null && currentRound + 1 === practiceEntries.length + 1;
 
+  // hotkey support
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // don’t trigger hotkeys while the user is typing in an input or textarea:
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement) {
+        return;
+      }
+      if (e.ctrlKey && e.key === "1") {
+        // Add
+        setActiveView("add");
+        setPracticeEntries(null);
+        setPracticeLanguage(null);
+      }
+
+      if (e.ctrlKey && e.key === "2") {
+        // View
+        setEditingEntryId(null);
+        setActiveView("view");
+        setPracticeEntries(null);
+        setPracticeLanguage(null);
+      }
+
+      if (e.ctrlKey && e.key === "3") {
+        // Practice
+        setActiveView("practice");
+        setPracticeEntries(null);
+        setPracticeLanguage(null);
+      }
+      /*
+      if (e.key === "ArrowLeft" && activeView === "view") {
+        // paginate, prev page
+        paginate("decrement");
+      }
+      if (e.key === "ArrowRight" && activeView === "view") {
+        // paginate, next page
+        paginate("increment");
+      }
+      */
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
-    <div className="pb-[150px] relative">
-      <Header />
+    <div className="flex min-h-screen flex-col">
+      <div className="relative flex-1 pb-[70px]">
+        <Header />
 
-      {addOrWithEditEntry && <AddEditForm />}
-      {activeView === "bulk-add" && <BulkAddEasy />}
-      {viewAndNoEdit && <EntriesView />}
-      {practiceAndNoPracticeEntries && <LanguageSelect />}
-      {onPracticeScreen && practiceEntries && practiceEntries.length === 0 && <NoPractice />}
+        {addOrWithEditEntry && <AddEditForm />}
+        {activeView === "bulk-add" && <BulkAddEasy />}
+        {viewAndNoEdit && <EntriesView />}
+        {practiceAndNoPracticeEntries && <LanguageSelect />}
+        {activeView === "about" && <About />}
 
-      {onPracticeScreen && currentRound !== null && practiceEntries && practiceEntries.length > 0 && stillPlaying && <Round roundData={practiceEntries[currentRound]} />}
+        {onPracticeScreen && practiceEntries && practiceEntries.length === 0 && <NoPractice />}
 
-      {onPracticeScreen && currentRound !== null && practiceEntries && practiceEntries.length > 0 && finishedPlaying && <PracticeSummary />}
+        {onPracticeScreen && currentRound !== null && practiceEntries && practiceEntries.length > 0 && stillPlaying && <Round roundData={practiceEntries[currentRound]} />}
 
-      {isNotificationShown && <Notification />}
+        {onPracticeScreen && currentRound !== null && practiceEntries && practiceEntries.length > 0 && finishedPlaying && <PracticeSummary />}
 
-      <ExportImport />
-      <AnimatedBackground />
+        {isNotificationShown && <Notification />}
+      </div>
+      <Footer />
     </div>
   );
 }

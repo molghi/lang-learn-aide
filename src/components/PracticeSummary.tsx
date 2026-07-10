@@ -12,7 +12,7 @@ export default function PracticeSummary() {
   ];
 
   return (
-    <div className="mx-auto max-w-3xl font-mono text-emerald-100">
+    <div className="mx-auto max-w-3xl font-mono text-emerald-100 px-4">
       <h1 className={`${STYLES_BLOCK_HEADER} text-emerald-400 mb-5`}>PRACTICE SUMMARY</h1>
 
       <div className="mb-10 text-center text-sm leading-5 text-emerald-200/70 opacity-60 hover:opacity-100 transition">
@@ -22,7 +22,7 @@ export default function PracticeSummary() {
       {/* PRINT ENTRIES + USER INPUTS */}
       <div className="space-y-6">
         {practiceEntries?.map((entry, index) => (
-          <div key={entry.id} className="rounded border border-emerald-500/30 bg-black/30 p-5 relative transition duration-700 hover:shadow-[inset_0_0_15px_rgba(156,163,175,0.4)]">
+          <div key={entry.id} className="rounded border border-emerald-500/30 bg-black/30 hover:bg-black/60 p-5 relative transition duration-700 hover:shadow-[inset_0_0_15px_rgba(156,163,175,0.4)]">
             <div title={`Round ${index + 1}`} className="absolute top-4 right-4 font-bold opacity-30 transition hover:opacity-60 text-5xl">
               {index + 1}
             </div>
@@ -47,7 +47,7 @@ export default function PracticeSummary() {
                   <button
                     key={ind}
                     title={item.title}
-                    className={`rounded border px-3 py-2 transition ${item.classes} ${isSelected ? "bg-gray-100/20 text-emerald-100" : ""}`}
+                    className={`rounded border px-2 sm:px-3 py-1 text-md sm:py-2 transition ${item.classes} ${isSelected ? "bg-gray-100/20 text-emerald-100" : ""}`}
                     onClick={() => {
                       setRoundRatings((prev) => {
                         const newRating = {

@@ -3,7 +3,7 @@ import { useMyContext } from "../context/AppContext.tsx";
 import { useEffect } from "react";
 
 export default function LanguageSelect() {
-  const { entries, practiceLanguage, setPracticeLanguage, gatherPracticeRounds } = useMyContext();
+  const { entries, practiceLanguage, setPracticeLanguage, gatherPracticeRounds, setCurrentRound, setPracticeEntries } = useMyContext();
 
   const uniqueLanguageCodes: string[] = [...new Set(entries.map((entry) => entry.language))];
   const uniqueLanguageTitles = uniqueLanguageCodes.map((code) => {
@@ -49,7 +49,15 @@ export default function LanguageSelect() {
 
       <div className="mt-6 flex justify-end">
         {uniqueLanguageTitles.length > 0 && (
-          <button disabled={!practiceLanguage} title={!practiceLanguage ? "Please select a language first" : ""} onClick={() => gatherPracticeRounds()} className="rounded border border-emerald-500/40 bg-emerald-500/10 px-5 py-2 text-emerald-100 transition hover:bg-emerald-500/20 disabled:opacity-40 disabled:cursor-not-allowed">
+          <button
+            disabled={!practiceLanguage}
+            title={!practiceLanguage ? "Please select a language first" : ""}
+            onClick={() => {
+              gatherPracticeRounds(practiceLanguage, entries, setPracticeEntries);
+              setCurrentRound(0);
+            }}
+            className="rounded border border-emerald-500/40 bg-emerald-500/10 px-5 py-2 text-emerald-100 transition hover:bg-emerald-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
             Continue
           </button>
         )}

@@ -1,10 +1,12 @@
 import { STYLES_GENERAL_BTN, APP_LANGUAGES, STYLES_BLOCK_HEADER } from "../constants.ts";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useMyContext } from "../context/AppContext.tsx";
 import { APP_LOCAL_STORAGE_LAST_LANG_KEY } from "../constants.ts";
 
 export default function AddEditForm() {
   const { entries, setEntries, setNotificationContent, setIsNotificationShown, editingEntryId, setEditingEntryId, setActiveView, setLastSelectedLang } = useMyContext();
+
+  const firstInputRef = useRef<HTMLInputElement | null>(null);
 
   // set form data if in Edit mode
   useEffect(() => {
@@ -178,6 +180,7 @@ export default function AddEditForm() {
       setEntries((prev) => [...prev, wordEntry]);
       setIsNotificationShown(true);
       setNotificationContent(["success", "Entry added"]);
+      firstInputRef.current?.focus();
     }
 
     // reset form fields
@@ -223,6 +226,7 @@ export default function AddEditForm() {
                 <div className="flex gap-2" key={f.name}>
                   {f.isRequired && <span style={{ color: "red" }}>*</span>}
                   <input
+                    ref={f.name === "word" ? firstInputRef : null}
                     value={valueGetter(f.name as keyof typeof formData)}
                     onChange={(e) => {
                       valueSetter(f.name as keyof typeof formData, e.target.value);
@@ -250,7 +254,7 @@ export default function AddEditForm() {
                     }}
                     name={f.name}
                     required={f.isRequired}
-                    className="bg-transparent border-b border-solid border-emerald-800 focus:outline-none w-full p-1 cursor-pointer focus:border-emerald-200 transition placeholder:text-gray-500"
+                    className="bg-transparent text-emerald-100 border-b border-solid border-emerald-800 focus:outline-none w-full p-1 cursor-pointer focus:border-emerald-200 transition placeholder:text-gray-500"
                   >
                     <option value="" disabled>
                       {f.placeholder}

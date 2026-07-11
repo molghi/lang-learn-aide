@@ -57,7 +57,7 @@ export default function BulkAddEasy() {
       </h2>
 
       <form onSubmit={(e) => bulkAdd(e)} className="px-4">
-        <select required value={langSelect} onChange={(e) => setLangSelect(e.target.value)} className="w-full rounded border border-emerald-500/30 bg-emerald-950/40 px-4 py-3 text-emerald-100 outline-none transition focus:border-emerald-400/60 cursor-pointer">
+        <select required value={langSelect} onChange={(e) => setLangSelect(e.target.value)} className="w-full rounded border border-emerald-500/30 px-4 py-3 bg-transparent text-emerald-100 outline-none transition focus:border-emerald-400/60 cursor-pointer">
           <option disabled value="">
             Select entry language
           </option>

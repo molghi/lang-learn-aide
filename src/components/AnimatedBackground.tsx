@@ -9,7 +9,7 @@ import matrixGif from "../assets/gifs/matrix.gif";
 import oceanNightGif from "../assets/gifs/ocean-night.gif";
 import particlesGif from "../assets/gifs/particles.gif";
 import rainBlackGif from "../assets/gifs/rain-black.gif";
-import rainForestGif from "../assets/gifs/rain-forest.gif";
+// import rainForestGif from "../assets/gifs/rain-forest.gif";
 import rainNightCityGif from "../assets/gifs/rain-night-city.gif";
 import rainGif from "../assets/gifs/rain.gif";
 import scanlinesGif from "../assets/gifs/scanlines.gif";
@@ -58,7 +58,7 @@ export default function AnimatedBackground() {
     { name: "Space Flight", url: spaceFlightGif },
     { name: "Night Ocean", url: oceanNightGif },
     { name: "Aurora", url: auroraGif },
-    { name: "Forest Rain", rainForestGif },
+    // { name: "Forest Rain", rainForestGif },
     { name: "Geometry", url: geometryGif },
     { name: "Glitter", url: glitterGif },
     { name: "Dark Rain", url: rainBlackGif },
@@ -89,7 +89,7 @@ export default function AnimatedBackground() {
             localStorage.setItem(APP_LOCAL_STORAGE_BG_KEY, value === "none" ? "null" : value);
           }}
           id="animated-bg"
-          className="bg-black/50 border border-emerald-600/90 text-emerald-200 px-2 py-1 rounded-sm outline-none focus:border-emerald-300 cursor-pointer"
+          className="bg-transparent text-emerald-100 border border-emerald-600/90 px-2 py-1 rounded-sm outline-none focus:border-emerald-300 cursor-pointer"
         >
           <option disabled>Animated bg</option>
           <option value="none">None</option>

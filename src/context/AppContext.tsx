@@ -1,5 +1,8 @@
 import { createContext, useState, useContext, useEffect } from "react";
-import { APP_LOCAL_STORAGE_ENTRIES_KEY, APP_LOCAL_STORAGE_BG_KEY, APP_ROUNDS_PER_PRACTICE, APP_LOCAL_STORAGE_LAST_LANG_KEY, APP_ENTRIES_PER_PAGE } from "../constants.ts";
+import { APP_LOCAL_STORAGE_ENTRIES_KEY, APP_LOCAL_STORAGE_BG_KEY, APP_LOCAL_STORAGE_LAST_LANG_KEY } from "../constants.ts";
+import paginate from "../utils/paginate.ts";
+import gatherPracticeRounds from "../utils/gatherPracticeRounds.ts";
+import spacedRepetition from "../utils/spacedRepetition.ts";
 
 export interface Entry {
   id: string; // unique
@@ -42,17 +45,17 @@ interface AppContextType {
   setPracticeLanguage: React.Dispatch<React.SetStateAction<string | null>>;
   practiceEntries: any[] | null;
   setPracticeEntries: React.Dispatch<React.SetStateAction<any[] | null>>;
-  gatherPracticeRounds: () => void;
+  gatherPracticeRounds: (practiceLanguage: string | null, entries: Entry[], setPracticeEntries: React.Dispatch<React.SetStateAction<any[] | null>>) => void;
   currentRound: number | null;
   setCurrentRound: React.Dispatch<React.SetStateAction<number | null>>;
   userInputs: string[] | null;
   setUserInputs: React.Dispatch<React.SetStateAction<string[] | null>>;
   roundRatings: any[] | null;
   setRoundRatings: React.Dispatch<React.SetStateAction<any[] | null>>;
-  spacedRepetition: () => void;
+  spacedRepetition: (practiceEntries: any[] | null, roundRatings: any[] | null, entries: Entry[]) => any[];
   lastSelectedLang: string | null;
   setLastSelectedLang: React.Dispatch<React.SetStateAction<string | null>>;
-  paginate: (filteredEntriesLength: number, flag?: "increment" | "decrement", pageToShow?: number) => void;
+  paginate: (filteredEntriesLength: number, setCurrentPage: React.Dispatch<React.SetStateAction<number>>, flag?: "increment" | "decrement", pageToShow?: number) => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -82,95 +85,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const stored = localStorage.getItem(APP_LOCAL_STORAGE_LAST_LANG_KEY);
     return stored ? stored : null;
   });
-
-  // =========================
-
-  function gatherPracticeRounds() {
-    if (!practiceLanguage) return;
-    // filter by lang
-    const filtered = entries.filter((entry) => entry.language === practiceLanguage);
-    const arr = [...filtered];
-    /* Fisher-Yates shuffle below to randomize selection: 
-        1. Start at the last element.
-        2. Pick a random index from 0 to the current index.
-        3. Swap the current element with the random element.
-        4. Move one position left.
-        5. Repeat until the whole array is shuffled.
-    */
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    // take only those entries that are due
-    const available = arr.filter((entry) => !entry.nextPractice || entry.nextPractice <= Date.now());
-    // get 5 (or less) entries
-    const selected = available.slice(0, APP_ROUNDS_PER_PRACTICE);
-    setCurrentRound(0);
-    setPracticeEntries(selected);
-  }
-
-  // =========================
-
-  function spacedRepetition() {
-    // spaced repetition system intervals:
-    const SRS_INTERVALS = {
-      poor: 60 * 60 * 1000, // 1 hour in ms
-      fair: 24 * 60 * 60 * 1000, // 1 day in ms
-      good: 3 * 24 * 60 * 60 * 1000, // 3 days in ms
-      perfect: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
-    };
-
-    // create a smaller thing (from practiceEntries, which are essentially a subset of entries)
-    const updatedPracticeEntries = practiceEntries?.map((practiceEntry) => {
-      if (!roundRatings) return practiceEntry;
-
-      const ratingObj = roundRatings.find((item) => item.entryId === practiceEntry.id);
-
-      if (!ratingObj) return practiceEntry;
-
-      const rating: "poor" | "fair" | "good" | "perfect" = ratingObj.recall.toLowerCase();
-
-      return {
-        ...practiceEntry,
-        nextPractice: Date.now() + SRS_INTERVALS[rating], // calc when to practice next
-      };
-    });
-
-    // update the bigger thing (entries)
-    const updatedEntries = entries.map((entry) => {
-      if (!updatedPracticeEntries) return entry;
-      const updated = updatedPracticeEntries.find((item) => item.id === entry.id);
-      return updated ?? entry;
-    });
-    setEntries(updatedEntries);
-    setCurrentRound(null);
-    setPracticeEntries(null);
-    setUserInputs(null);
-    setRoundRatings(null);
-  }
-
-  // =========================
-
-  type PaginateFlag = "increment" | "decrement";
-
-  function paginate(filteredEntriesLength: number, flag?: PaginateFlag, pageToShow?: number) {
-    const totalPages: number = Math.ceil(filteredEntriesLength / APP_ENTRIES_PER_PAGE);
-
-    if (flag === undefined && pageToShow === undefined) {
-      throw new Error("Either flag or pageToShow must be provided");
-    }
-    if (flag === "increment") {
-      setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-      return;
-    }
-    if (flag === "decrement") {
-      setCurrentPage((prev) => Math.max(prev - 1, 1));
-      return;
-    }
-    if (typeof pageToShow === "number") {
-      setCurrentPage(pageToShow);
-    }
-  }
 
   // =========================
 

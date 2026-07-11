@@ -4,6 +4,7 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import { useState } from "react";
 import { useMyContext } from "../context/AppContext.tsx";
+import { Pencil, Trash2 } from "lucide-react";
 
 // ============================================================================
 
@@ -64,18 +65,19 @@ export default function EntryCard({ entry }: { entry: Entry }) {
       <style>{lightboxStyles}</style>
 
       {/* Btns */}
-      <div className="absolute top-2 right-2 flex gap-2">
+      <div className="absolute top-2 right-2 flex gap-3">
         <button
+          title="Edit entry"
           onClick={() => {
             setEditingEntryId(entry.id);
             setActiveView("add");
           }}
           className="px-2 py-1 text-xs border border-emerald-500/30 bg-black/40 text-emerald-200 opacity-60 hover:opacity-100 hover:border-emerald-300 hover:text-emerald-100 transition-all duration-200 backdrop-blur-sm rounded-sm"
         >
-          edit
+          <Pencil className="w-4 h-4 text-emerald-400 hover:text-emerald-200 transition" />
         </button>
-        <button onClick={() => deleteEntry()} className="px-2 py-1 text-xs border border-red-500/30 bg-black/40 text-red-300 opacity-60 hover:opacity-100 hover:border-red-400 hover:text-red-200 transition-all duration-200 backdrop-blur-sm rounded-sm">
-          delete
+        <button title="Delete entry" onClick={() => deleteEntry()} className="px-2 py-1 text-xs border border-red-500/30 bg-black/40 text-red-300 opacity-60 hover:opacity-100 hover:border-red-400 hover:text-red-200 transition-all duration-200 backdrop-blur-sm rounded-sm">
+          <Trash2 className="w-4 h-4 text-red-400 hover:text-red-300 transition" />
         </button>
       </div>
 

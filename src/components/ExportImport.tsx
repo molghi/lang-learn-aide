@@ -81,6 +81,7 @@ export default function ExportImport() {
         }
 
         setEntries(updatedEntries);
+        window.scrollTo({ top: 0, behavior: "smooth" });
         setIsNotificationShown(true);
         setNotificationContent(["success", "Imported successfully!"]);
         setActiveView("view");

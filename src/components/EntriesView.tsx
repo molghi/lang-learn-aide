@@ -127,7 +127,14 @@ export default function EntriesView() {
             {/* Filter */}
             <div className="flex gap-4">
               <span>Filter: </span>
-              <select value={filter} onChange={(e) => setFilter(e.target.value)} className="bg-black/40 border rounded border-emerald-500/30 px-2 py-1 text-sm cursor-pointer">
+              <select
+                value={filter}
+                onChange={(e) => {
+                  setFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="bg-transparent text-emerald-100 border rounded border-emerald-500/30 px-2 py-1 text-sm cursor-pointer"
+              >
                 <option value="">None</option>
                 {filterOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -153,21 +160,21 @@ export default function EntriesView() {
 
         {/* pagination */}
         {filteredEntries.length > 0 && (
-          <div className="flex justify-center mt-6 gap-8 text-sm">
+          <div className="flex flex-wrap justify-center mt-6 gap-6 text-sm max-w-full overflow-x-auto px-2">
             {filteredEntries.length > 10 && (
-              <button ref={prevBtn} onClick={() => paginate(filteredEntries.length, "decrement", undefined)} className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600`}>
+              <button ref={prevBtn} onClick={() => paginate(filteredEntries.length, setCurrentPage, "decrement", undefined)} className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600`}>
                 Prev
               </button>
             )}
 
             {Array.from({ length: Math.ceil(filteredEntries.length / APP_ENTRIES_PER_PAGE) }, (_, i) => (
-              <button key={i + 1} className={`${STYLES_GENERAL_BTN} min-w-[17px]  ${i + 1 === currentPage ? "border-solid border-emerald-400" : "border-dashed border-emerald-600"}`} onClick={() => paginate(filteredEntries.length, undefined, i + 1)}>
+              <button key={i + 1} className={`${STYLES_GENERAL_BTN} min-w-[17px]  ${i + 1 === currentPage ? "border-solid border-emerald-400" : "border-dashed border-emerald-600"}`} onClick={() => paginate(filteredEntries.length, setCurrentPage, undefined, i + 1)}>
                 {i + 1}
               </button>
             ))}
 
             {filteredEntries.length > 10 && (
-              <button ref={nextBtn} onClick={() => paginate(filteredEntries.length, "increment", undefined)} className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600`}>
+              <button ref={nextBtn} onClick={() => paginate(filteredEntries.length, setCurrentPage, "increment", undefined)} className={`${STYLES_GENERAL_BTN} border-dashed border-emerald-600`}>
                 Next
               </button>
             )}

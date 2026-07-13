@@ -1,5 +1,6 @@
 import { useMyContext } from "../context/AppContext.tsx";
 import { STYLES_BLOCK_HEADER } from "../constants.ts";
+import savePracticeDay from "../utils/savePracticeDay.ts";
 
 export default function PracticeSummary() {
   const { practiceEntries, userInputs, roundRatings, setRoundRatings, spacedRepetition, setIsNotificationShown, setNotificationContent, setActiveView, setCurrentRound, setPracticeEntries, entries, setEntries, setUserInputs } = useMyContext();
@@ -77,8 +78,10 @@ export default function PracticeSummary() {
       <div className="mt-10 flex justify-end">
         <button
           onClick={() => {
+            // finish this session
             const updatedEntries = spacedRepetition(practiceEntries, roundRatings, entries);
             setEntries(updatedEntries);
+            savePracticeDay();
             setCurrentRound(null);
             setPracticeEntries(null);
             setUserInputs(null);
